@@ -1,0 +1,463 @@
+/* ── List / Grid ── */
+.listWrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
+  background: var(--color-surface-alt, #ede8dc);
+  flex-shrink: 0;
+}
+
+.listTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text, #2a1f14);
+}
+
+.listCount {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.countUnlocked {
+  color: var(--color-warning, #e8a040);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Card base ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1; /* enforce square */
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 2px 2px 0 var(--color-border, #3d2b1f);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  position: relative;
+  overflow: hidden;
+  /* Default = locked state */
+  background: var(--color-surface-alt, #ede8dc);
+  opacity: 0.7;
+}
+
+.card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-border, #3d2b1f);
+  opacity: 1;
+}
+
+/* Unlocked card — full color */
+.cardUnlocked {
+  background: #fff8e8;
+  border-color: #b8861a;
+  opacity: 1;
+}
+
+.cardUnlocked:hover {
+  border-color: var(--color-warning, #e8a040);
+}
+
+/* Selected highlight */
+.cardSelected {
+  border-color: var(--color-primary, #e87040) !important;
+  box-shadow: 3px 3px 0 var(--color-primary, #e87040) !important;
+  opacity: 1 !important;
+}
+
+/* ── Card image area — fills remaining space ── */
+.cardImg {
+  flex: 1; /* fill space above footer */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-bottom: 1px solid var(--color-border, #3d2b1f);
+  /* locked: gray bg */
+  background: #d8d0c4;
+}
+
+.cardUnlocked .cardImg {
+  /* unlocked: warm bg */
+  background: #f0e4c0;
+}
+
+.cardEmoji {
+  font-size: 42px; /* big emoji to match square card */
+  /* locked: muted */
+  filter: grayscale(0.5) opacity(0.7);
+}
+
+.cardUnlocked .cardEmoji {
+  filter: none;
+}
+
+/* Lock icon overlay on locked cards */
+.lockOverlay {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+/* ── Card footer — thin bar ── */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 8px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.cardLevelTag {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #8a7a68;
+  flex-shrink: 0;
+}
+
+.cardUnlocked .cardLevelTag {
+  color: #b8861a;
+}
+
+.cardName {
+  font-size: 10px;
+  font-weight: 700;
+  color: #5a4a38;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardUnlocked .cardName {
+  color: var(--color-text, #2a1f14);
+}
+
+/* ── Top-left corner toggle (unlock checkbox) ── */
+.cardCornerToggle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(61, 43, 31, 0.45);
+  background: rgba(255, 253, 247, 0.75);
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--color-success, #5aa469);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.cardCornerToggle:hover {
+  border-color: var(--color-success, #5aa469);
+  background: rgba(224, 240, 228, 0.9);
+}
+
+.cardCornerToggleOn {
+  border-color: var(--color-success, #5aa469);
+  background: rgba(224, 240, 228, 0.88);
+}
+
+/* ── Detail Panel ── */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+}
+
+.detailTop {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--color-surface-alt, #ede8dc);
+}
+
+.detailImgBox {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 3px 3px 0 var(--color-border, #3d2b1f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detailEmoji {
+  font-size: 56px;
+}
+
+.detailMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.levelBadge {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: #b8861a;
+  background: #fff8e0;
+  border: 2px solid #b8861a;
+  padding: 3px 8px;
+  align-self: flex-start;
+}
+
+.detailName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+  line-height: 1.5;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.priceIcon {
+  font-size: 18px;
+}
+
+.priceVal {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--color-warning, #e8a040);
+  font-variant-numeric: tabular-nums;
+}
+
+.priceCur {
+  font-size: 14px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.metaStats {
+  display: flex;
+  gap: 16px;
+}
+
+.metaStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.metaStatLabel {
+  color: var(--color-text-muted, #ada090);
+  font-size: 11px;
+}
+
+.metaStatVal {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--color-text, #2a1f14);
+}
+
+.unlockBtn {
+  padding: 8px 14px;
+  border: var(--pixel-border, 2px solid #3d2b1f);
+  box-shadow: var(--pixel-shadow-sm, 2px 2px 0 #3d2b1f);
+  background: var(--color-surface, #fffdf7);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.unlockBtn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-border, #3d2b1f);
+}
+
+.unlockBtnOn {
+  background: #fff8e0;
+  border-color: #b8861a;
+  color: #b8861a;
+  box-shadow: 2px 2px 0 #b8861a;
+}
+
+/* ── Description ── */
+.description {
+  font-size: 13px;
+  color: var(--color-text-secondary, #7a6a5a);
+  line-height: 1.8;
+  padding: 14px;
+  background: var(--color-surface, #fffdf7);
+  border-left: 4px solid var(--color-warning, #e8a040);
+}
+
+/* ── Obtain ── */
+.obtainRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-surface, #fffdf7);
+  border: var(--pixel-border, 2px solid #3d2b1f);
+  box-shadow: var(--pixel-shadow-sm, 2px 2px 0 #3d2b1f);
+}
+
+.obtainIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.obtainLabel {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted, #ada090);
+  margin-bottom: 3px;
+}
+
+.obtainVal {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+}
+
+/* ── Ingredients ── */
+.ingredSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text-secondary, #7a6a5a);
+  letter-spacing: 0.04em;
+}
+
+.ingredList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: var(--pixel-border, 2px solid #3d2b1f);
+  box-shadow: var(--pixel-shadow, 3px 3px 0 #3d2b1f);
+  overflow: hidden;
+}
+
+.ingredRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--color-surface, #fffdf7);
+  border-bottom: 1px solid var(--color-surface-alt, #ede8dc);
+  text-align: left;
+  transition: background 0.1s;
+  cursor: pointer;
+  width: 100%;
+}
+
+.ingredRow:last-child {
+  border-bottom: none;
+}
+
+.ingredRow:not(:disabled):hover {
+  background: var(--color-surface-alt, #ede8dc);
+}
+
+.ingredRow:disabled {
+  cursor: default;
+}
+
+.ingredMissing {
+  background: #fff5f5 !important;
+}
+
+.ingredEmoji {
+  font-size: 28px;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 1px solid var(--color-border, #3d2b1f);
+}
+
+.ingredInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ingredName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+}
+
+.ingredLocation {
+  font-size: 12px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.ingredRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ingredQty {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text, #2a1f14);
+  font-variant-numeric: tabular-nums;
+}
+
+.missingTag {
+  background: var(--color-danger, #d94040);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+}
+
+.missingAlert {
+  padding: 10px 14px;
+  background: #fde8e8;
+  border: 2px solid var(--color-danger, #d94040);
+  font-size: 12px;
+  color: var(--color-danger, #d94040);
+  font-weight: 600;
+}

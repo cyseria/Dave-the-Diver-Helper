@@ -1,0 +1,1050 @@
+/* ── Page shell — owns the tab bar + content area ── */
+.staffPage {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Tab bar ── */
+.tabBar {
+  display: flex;
+  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
+  flex-shrink: 0;
+  background: var(--color-surface-alt, #ede8dc);
+}
+
+.tabBtn {
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border, #3d2b1f);
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text-muted, #ada090);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.tabBtn:last-child {
+  border-right: none;
+}
+
+.tabBtn:hover {
+  background: var(--color-surface, #fffdf7);
+  color: var(--color-text, #2a1f14);
+}
+
+.tabBtnActive {
+  background: var(--color-surface, #fffdf7);
+  color: var(--color-primary, #e87040);
+  position: relative;
+}
+
+.tabBtnActive::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-surface, #fffdf7);
+}
+
+/* ── Grid list ── */
+.listWrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
+  background: var(--color-surface-alt, #ede8dc);
+  flex-shrink: 0;
+}
+
+.listTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text, #2a1f14);
+}
+
+.listCount {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Card ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1;
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 2px 2px 0 var(--color-border, #3d2b1f);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-border, #3d2b1f);
+}
+
+.cardSelected {
+  border-color: var(--color-primary, #e87040) !important;
+  box-shadow: 3px 3px 0 var(--color-primary, #e87040) !important;
+}
+
+/* ── Tier badge — top right corner ── */
+.tierBadge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  border: 2px solid;
+  z-index: 2;
+}
+
+.tierBadge_S {
+  background: #fff0a0;
+  border-color: #c8900a;
+  color: #7a5000;
+  box-shadow: 1px 1px 0 #c8900a;
+  animation: tierGlow 2.5s ease-in-out infinite alternate;
+}
+
+.tierBadge_A {
+  background: #e8f4d0;
+  border-color: #5a8830;
+  color: #2a5010;
+  box-shadow: 1px 1px 0 #5a8830;
+}
+
+@keyframes tierGlow {
+  from {
+    box-shadow: 1px 1px 0 #c8900a;
+  }
+  to {
+    box-shadow: 1px 1px 0 #c8900a, 0 0 6px rgba(220, 160, 20, 0.7);
+  }
+}
+
+/* ── Role inline tag — after name in footer ── */
+.roleTag {
+  flex-shrink: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  padding: 2px 4px;
+  border: 1px solid;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.roleTag_kitchen {
+  background: rgba(200, 72, 32, 0.12);
+  border-color: #c84820;
+  color: #9a2c0e;
+}
+
+.roleTag_hall {
+  background: rgba(26, 106, 171, 0.12);
+  border-color: #1a6aab;
+  color: #104880;
+}
+
+.roleTag_dispatch {
+  background: rgba(42, 120, 72, 0.12);
+  border-color: #3a8050;
+  color: #1e5c30;
+}
+
+/* Not hired — muted */
+.cardUnhired {
+  opacity: 0.65;
+}
+
+.cardUnhired .cardEmoji {
+  filter: grayscale(0.6) brightness(0.85);
+}
+
+.cardUnhired .cardFooter {
+  background: #e4e0d8;
+}
+
+.cardUnhired .cardName {
+  color: #6e5c48;
+}
+
+/* Hired per role — distinct warm/cool/green */
+.cardHired.cardRole_kitchen {
+  border-color: #b84020;
+}
+
+.cardHired.cardRole_kitchen .cardImg {
+  background: #f8e4d8;
+}
+
+.cardHired.cardRole_kitchen .cardFooter {
+  background: #fdf0ea;
+}
+
+.cardHired.cardRole_hall {
+  border-color: #1a60a0;
+}
+
+.cardHired.cardRole_hall .cardImg {
+  background: #d8e8f8;
+}
+
+.cardHired.cardRole_hall .cardFooter {
+  background: #eaf3fd;
+}
+
+.cardHired.cardRole_dispatch {
+  border-color: #2a7848;
+}
+
+.cardHired.cardRole_dispatch .cardImg {
+  background: #d8f0e4;
+}
+
+.cardHired.cardRole_dispatch .cardFooter {
+  background: #eafaf0;
+}
+
+/* Unhired image background */
+.cardUnhired .cardImg {
+  background: #d4cfc6;
+}
+
+/* ── Card image area ── */
+.cardImg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-alt, #ede8dc);
+}
+
+.cardEmoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* Not-hired indicator — bottom right */
+.lockOverlay {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 12px;
+  opacity: 0.4;
+}
+
+/* Hire toggle — top left corner */
+.cardCornerToggle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(61, 43, 31, 0.4);
+  background: rgba(255, 253, 247, 0.75);
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--color-success, #5aa469);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.cardCornerToggle:hover {
+  border-color: var(--color-success, #5aa469);
+  background: rgba(224, 240, 228, 0.9);
+}
+
+.cardCornerToggleOn {
+  border-color: var(--color-success, #5aa469);
+  background: rgba(224, 240, 228, 0.88);
+}
+
+/* ── Card footer ── */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  background: var(--color-surface, #fffdf7);
+  border-top: 1px solid rgba(61, 43, 31, 0.15);
+  flex-shrink: 0;
+  min-height: 26px;
+}
+
+.roleDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.roleDot_kitchen {
+  background: #c84820;
+}
+.roleDot_hall {
+  background: #1a6aab;
+}
+.roleDot_dispatch {
+  background: #3a8050;
+}
+
+.cardName {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: "Press Start 2P", monospace;
+}
+
+/* ── Detail panel ── */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 680px;
+}
+
+.detailHeader {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 16px;
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 3px 3px 0 var(--color-border, #3d2b1f);
+}
+
+.detailHeader_kitchen {
+  background: #fdf0ea;
+}
+.detailHeader_hall {
+  background: #eaf3fd;
+}
+.detailHeader_dispatch {
+  background: #eafaf0;
+}
+
+/* Detail tier badge */
+.detailTierBadge {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border: 1px solid;
+}
+
+.detailTierBadge.tierBadge_S {
+  background: #fff8d8;
+  border-color: #c8a020;
+  color: #8a6010;
+}
+
+.detailTierBadge.tierBadge_A {
+  background: #f0f4e0;
+  border-color: #809030;
+  color: #4a5820;
+}
+
+/* Recommend box */
+.recommendBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid;
+}
+
+.recommendBox_S {
+  background: #fffae0;
+  border-color: #d4b040;
+  box-shadow: 2px 2px 0 #d4b040;
+}
+
+.recommendBox_A {
+  background: #f4f8e8;
+  border-color: #8aaa40;
+  box-shadow: 2px 2px 0 #8aaa40;
+}
+
+.recommendIcon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  font-weight: 900;
+  border: 2px solid;
+}
+
+.recommendIcon_S {
+  background: #fff0a0;
+  border-color: #c8900a;
+  color: #7a5000;
+}
+
+.recommendIcon_A {
+  background: #e8f4d0;
+  border-color: #5a8830;
+  color: #2a5010;
+}
+
+.recommendText {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--color-text, #2a1f14);
+}
+
+/* Combo mini list in detail */
+.comboMiniList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comboMini {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--color-surface, #fffdf7);
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 2px 2px 0 var(--color-border, #3d2b1f);
+}
+
+.comboMiniEmoji {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.comboMiniName {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+  margin-bottom: 4px;
+}
+
+.comboMiniMembers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.comboMiniMember {
+  font-size: 10px;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 1px solid var(--color-border, #3d2b1f);
+  padding: 1px 6px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.detailAvatarBox {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 2px 2px 0 var(--color-border, #3d2b1f);
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+}
+
+.detailMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailNameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.detailName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+}
+
+/* Role badge */
+.roleBadge {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.roleBadge_kitchen {
+  color: #c84820;
+  background: #fde8dc;
+  border-color: #c84820;
+}
+.roleBadge_hall {
+  color: #1a6aab;
+  background: #dceaf8;
+  border-color: #1a6aab;
+}
+.roleBadge_dispatch {
+  color: #2a7848;
+  background: #ddf0e4;
+  border-color: #2a7848;
+}
+
+.detailCostRow {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.costItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.costLabel {
+  font-size: 10px;
+  color: var(--color-text-muted, #ada090);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.costVal {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text, #2a1f14);
+}
+
+.detailDesc {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+/* ── Skills ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.skillList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skillItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border: 2px solid;
+}
+
+.skillLv3 {
+  background: #f0ece4;
+  border-color: #9a8870;
+  box-shadow: 2px 2px 0 #9a8870;
+}
+.skillLv5 {
+  background: #e4f0e8;
+  border-color: #3a8060;
+  box-shadow: 2px 2px 0 #3a8060;
+}
+.skillLv7 {
+  background: #faeadc;
+  border-color: #c87840;
+  box-shadow: 2px 2px 0 #c87840;
+}
+.skillLv10 {
+  background: #ece4f4;
+  border-color: #6a4a8a;
+  box-shadow: 2px 2px 0 #6a4a8a;
+}
+.skillLv15 {
+  background: #dce8f8;
+  border-color: #2a5a8a;
+  box-shadow: 2px 2px 0 #2a5a8a;
+}
+
+.skillLevel {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.skillLv3 .skillLevel {
+  color: #7a6858;
+}
+.skillLv5 .skillLevel {
+  color: #2a7050;
+}
+.skillLv7 .skillLevel {
+  color: #a06030;
+}
+.skillLv10 .skillLevel {
+  color: #5a3a7a;
+}
+.skillLv15 .skillLevel {
+  color: #1a4a7a;
+}
+
+.skillBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.skillName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+}
+.skillDesc {
+  font-size: 11px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.dishTag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1a4a7a;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: #dce8f8;
+  border: 1px solid #2a5a8a;
+  padding: 2px 6px;
+}
+
+/* ── Stats ── */
+.statsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statIcon {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.statLabel {
+  width: 36px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-secondary, #7a6a5a);
+  flex-shrink: 0;
+}
+
+.statBarTrack {
+  flex: 1;
+  height: 12px;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 1px solid var(--color-border, #3d2b1f);
+  overflow: hidden;
+}
+
+.statBar {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.statBarHigh {
+  background: #e87040;
+}
+.statBarMid {
+  background: #e8a040;
+}
+.statBarLow {
+  background: #9ab8d0;
+}
+
+.statVal {
+  width: 40px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text, #2a1f14);
+  flex-shrink: 0;
+}
+
+.statsTotal {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #7a6a5a);
+  text-align: right;
+}
+
+.statsTotal strong {
+  font-size: 15px;
+  color: var(--color-primary, #e87040);
+}
+
+/* ═══════════════════════════════════════
+   RESTAURANT LEVELS — full-width page
+═══════════════════════════════════════ */
+.levelsPage {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-bg, #f5f0e8);
+}
+
+.levelsInner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.levelsTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: var(--color-text, #2a1f14);
+  border-bottom: 2px solid var(--color-border, #3d2b1f);
+  padding-bottom: 12px;
+}
+
+.levelsTip {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--color-text-secondary, #7a6a5a);
+  border-left: 3px solid var(--color-warning, #e8a040);
+  padding-left: 12px;
+}
+
+/* Tier cards row */
+.tiersRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .tiersRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tierCard {
+  border: 2px solid;
+  background: var(--color-surface, #fffdf7);
+  overflow: hidden;
+}
+
+.tierTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.tierEmoji {
+  font-size: 32px;
+}
+
+.tierName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.tierBody {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tierStat {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.tierStatLabel {
+  font-size: 10px;
+  color: var(--color-text-muted, #ada090);
+  flex: 1;
+}
+
+.tierStatVal {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--color-text, #2a1f14);
+  font-family: "Press Start 2P", monospace;
+  line-height: 1;
+}
+
+.tierStatUnit {
+  font-size: 10px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.tierDivider {
+  border-top: 1px dashed rgba(61, 43, 31, 0.15);
+  margin: 2px 0;
+}
+
+.tierStaff {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tierStaffBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+
+/* ── Recommended combos ── */
+.combosSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.combosTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.combosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.comboCard {
+  background: var(--color-surface, #fffdf7);
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: 2px 2px 0 var(--color-border, #3d2b1f);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comboCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comboEmoji {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.comboName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text, #2a1f14);
+  margin-bottom: 4px;
+}
+
+.comboTag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #a06030;
+  background: #fff4d8;
+  border: 1px solid #d4a030;
+  padding: 1px 7px;
+}
+
+.comboMembers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.comboMemberChip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border: 1px solid;
+}
+
+.comboMemberChip_kitchen {
+  background: #fde8dc;
+  border-color: #c84820;
+  color: #8a2010;
+}
+
+.comboMemberChip_hall {
+  background: #dceaf8;
+  border-color: #1a6aab;
+  color: #0a3870;
+}
+
+.comboMemberChip_dispatch {
+  background: #ddf0e4;
+  border-color: #2a7848;
+  color: #0a4828;
+}
+
+.comboMemberRole {
+  font-size: 9px;
+  opacity: 0.7;
+  border-left: 1px solid currentColor;
+  padding-left: 4px;
+  margin-left: 2px;
+}
+
+.comboDesc {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--color-text-secondary, #7a6a5a);
+  border-top: 1px dashed var(--color-surface-alt, #ede8dc);
+  padding-top: 8px;
+}
+
+/* Training cost table */
+.trainSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trainTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.trainTable {
+  border: 2px solid var(--color-border, #3d2b1f);
+  overflow: hidden;
+}
+
+.trainHead {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr;
+  gap: 0;
+  padding: 8px 14px;
+  background: var(--color-surface-alt, #ede8dc);
+  border-bottom: 2px solid var(--color-border, #3d2b1f);
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.trainRow {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr;
+  align-items: center;
+  padding: 7px 14px;
+  border-bottom: 1px solid rgba(61, 43, 31, 0.08);
+  font-size: 12px;
+  background: var(--color-surface, #fffdf7);
+  transition: background 0.1s;
+}
+
+.trainRow:last-child {
+  border-bottom: none;
+}
+
+.trainRow:hover {
+  background: #faf6ee;
+}
+
+.trainRowKey {
+  background: #fff8e8 !important;
+  border-bottom: 1px solid #e8c840;
+}
+
+.trainLv {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text-secondary, #7a6a5a);
+}
+
+.trainRowKey .trainLv {
+  color: #a06030;
+}
+
+.trainCost {
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+}
+
+.trainMark {
+  font-size: 10px;
+  color: #a06030;
+  font-weight: 600;
+}

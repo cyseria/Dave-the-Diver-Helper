@@ -1,0 +1,665 @@
+/* ── Page layout ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  background: var(--color-bg, #f5f0e8);
+}
+
+/* ── Category tabs ── */
+.catTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
+  background: var(--color-surface-alt, #ede8dc);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.catTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(61, 43, 31, 0.2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
+}
+
+.catTab:last-child {
+  border-right: none;
+}
+
+.catTab:hover {
+  background: rgba(232, 112, 64, 0.08);
+}
+
+.catTabActive {
+  background: var(--color-primary-soft, #fde8d8);
+  border-bottom: 2px solid var(--color-primary, #e87040);
+  margin-bottom: -2px;
+}
+
+.catTabActive .catLabel {
+  color: #a03010;
+}
+
+.catEmoji {
+  font-size: 16px;
+}
+
+.catLabel {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text, #2a1f14);
+}
+
+/* ── Main area ── */
+.mainArea {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Tree panel ── */
+.treePanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: var(--pixel-border, 2px solid #3d2b1f);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.treePanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--color-surface, #fffdf7);
+  border-bottom: 1px solid rgba(61, 43, 31, 0.15);
+  flex-shrink: 0;
+}
+
+.treePanelTitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text, #2a1f14);
+}
+
+.treePanelCount {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-warning, #e8a040);
+}
+
+.treeScrollOuter {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 20px;
+}
+
+/* The inner container for the tree (sized to fit content) */
+.treeScroll {
+  position: relative;
+}
+
+.treeSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.emptyTree {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-muted, #ada090);
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+}
+
+/* ── Tree cards ── */
+.treeCard {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border: 2px solid #c8b090;
+  background: var(--color-surface, #fffdf7);
+  transition: border-color 0.1s, box-shadow 0.1s, background 0.1s;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.treeCard:hover {
+  border-color: var(--color-primary, #e87040);
+  box-shadow: 2px 2px 0 rgba(232, 112, 64, 0.3);
+  z-index: 1;
+}
+
+.treeCardUnowned {
+  opacity: 0.55;
+  background: #ede8e0;
+}
+
+.treeCardOwned {
+  opacity: 1;
+}
+
+.treeCardSelected {
+  border-color: var(--color-primary, #e87040) !important;
+  box-shadow: 3px 3px 0 var(--color-primary, #e87040) !important;
+  background: #fff4ee !important;
+  opacity: 1 !important;
+  z-index: 2;
+}
+
+/* Owned checkbox */
+.treeCardCheck {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #b8a898;
+  background: transparent;
+  cursor: pointer;
+  font-size: 8px;
+  color: #5a8830;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  z-index: 3;
+  transition: border-color 0.1s, background 0.1s;
+}
+
+.treeCardCheck:hover {
+  border-color: var(--color-primary, #e87040);
+}
+
+.treeCardCheckOn {
+  background: #e8f4d0;
+  border-color: #5a8830;
+  color: #2a6010;
+}
+
+.treeCardEmoji {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.treeCardInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.treeCardName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text, #2a1f14);
+  line-height: 1.45;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.treeCardUnowned .treeCardName {
+  color: #6e5c48;
+}
+
+.treeCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.treeCardElem {
+  font-size: 11px;
+}
+
+.treeCardDmg {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: var(--color-text-muted, #ada090);
+}
+
+/* ── Element colors ── */
+.elemNone {
+  color: #7a6a5a;
+}
+.elemFire {
+  color: #d04010;
+}
+.elemPoison {
+  color: #508020;
+}
+.elemLightning {
+  color: #6060b0;
+}
+.elemShock {
+  color: #5050a0;
+}
+.elemSleep {
+  color: #507090;
+}
+.elemFreeze {
+  color: #2090b8;
+}
+.elemThunder {
+  color: #3838a0;
+}
+
+/* ── Detail panel ── */
+.detailPanel {
+  width: 400px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  background: var(--color-bg, #f5f0e8);
+  padding: 24px;
+}
+
+.emptyDetail {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.emptyIcon {
+  font-size: 52px;
+  opacity: 0.4;
+}
+
+.emptyDetail p {
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* ── Detail content ── */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detailHeader {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-surface-alt, #ede8dc);
+}
+
+.detailEmoji {
+  font-size: 48px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.detailMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.detailName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  color: var(--color-text, #2a1f14);
+  margin: 0 0 10px;
+  line-height: 1.6;
+}
+
+.detailBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.elemBadge,
+.tierBadge {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  padding: 3px 8px;
+  border: 2px solid;
+}
+
+.elemBadge.elemNone {
+  background: #f0ece4;
+  border-color: #c8b8a8;
+  color: #7a6a5a;
+}
+.elemBadge.elemFire {
+  background: #fde8d0;
+  border-color: #d04010;
+  color: #a02000;
+}
+.elemBadge.elemPoison {
+  background: #e0f0d0;
+  border-color: #508020;
+  color: #306010;
+}
+.elemBadge.elemLightning {
+  background: #e8e8f8;
+  border-color: #6060b0;
+  color: #3030a0;
+}
+.elemBadge.elemShock {
+  background: #e4e4f4;
+  border-color: #5050a0;
+  color: #303070;
+}
+.elemBadge.elemSleep {
+  background: #dce8f0;
+  border-color: #507090;
+  color: #305060;
+}
+.elemBadge.elemFreeze {
+  background: #d0eef8;
+  border-color: #2090b8;
+  color: #006080;
+}
+.elemBadge.elemThunder {
+  background: #e0e0f8;
+  border-color: #3838a0;
+  color: #202060;
+}
+
+.tierBadge {
+  background: #f5f0e8;
+  border-color: #c8b090;
+  color: #7a6040;
+}
+
+.ownedToggle {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 2px solid #b8a898;
+  background: transparent;
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #8a7a68;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.ownedToggle:hover {
+  border-color: #5a8830;
+  color: #2a6010;
+}
+
+.ownedToggleOn {
+  background: #e8f4d0;
+  border-color: #5a8830;
+  color: #2a6010;
+  box-shadow: 2px 2px 0 #5a8830;
+}
+
+/* Stats */
+.statsRow {
+  display: flex;
+  gap: 10px;
+}
+
+.statBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  background: var(--color-surface-alt, #ede8dc);
+  border: var(--pixel-border, 2px solid #3d2b1f);
+}
+
+.statLabel {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: var(--color-text-muted, #ada090);
+  text-align: center;
+}
+
+.statValue {
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* Section label */
+.sectionLabel {
+  display: block;
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text-muted, #ada090);
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+
+/* Effect */
+.effectBox {
+  padding: 12px 14px;
+  background: var(--color-surface, #fffdf7);
+  border: var(--pixel-border, 2px solid #3d2b1f);
+}
+
+.effectText {
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* Chain */
+.chainBox {
+  padding: 12px 14px;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 2px solid rgba(61, 43, 31, 0.2);
+}
+
+.chainRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.chainItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chainArrow {
+  font-size: 12px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.chainAncestor {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #7a6a5a;
+  padding: 2px 6px;
+  background: rgba(61, 43, 31, 0.06);
+  border: 1px solid rgba(61, 43, 31, 0.15);
+}
+
+.chainCurrent {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #903010;
+  padding: 3px 8px;
+  background: #fde8d0;
+  border: 2px solid #e87040;
+  box-shadow: 1px 1px 0 #e87040;
+}
+
+.chainNext {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #8a7a68;
+  padding: 2px 6px;
+  border: 1px dashed #b8a898;
+}
+
+/* Materials */
+.materialsBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.materialList {
+  display: flex;
+  flex-direction: column;
+  border: var(--pixel-border, 2px solid #3d2b1f);
+}
+
+.materialRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(61, 43, 31, 0.1);
+  background: var(--color-surface, #fffdf7);
+}
+
+.materialRow:last-child {
+  border-bottom: none;
+}
+
+.materialRow:nth-child(even) {
+  background: #f7f3eb;
+}
+
+.matName {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+  font-weight: 600;
+}
+
+.matQty {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  color: var(--color-warning, #e8a040);
+  flex-shrink: 0;
+}
+
+.matTipIcon {
+  font-size: 14px;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.goldRow {
+  background: #fffbe8 !important;
+}
+
+.goldRow .matName {
+  font-weight: 700;
+  color: #806010;
+}
+
+.goldRow .matQty {
+  color: #a07800;
+  font-size: 11px;
+}
+
+/* Expanded tips below material list */
+.matTipsExpanded {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  background: #f8f4e8;
+  border: 1px solid #d8c890;
+  border-left: 4px solid #d8a840;
+}
+
+.matTipRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.matTipName {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #7a5a20;
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 0;
+}
+
+.matTipText {
+  font-size: 12px;
+  color: #5a4820;
+  line-height: 1.65;
+}
+
+/* Free weapon */
+.freeBox {
+  padding: 12px 14px;
+  background: #e8f4d0;
+  border: 2px solid #5a8830;
+  font-size: 13px;
+  color: #2a6010;
+  font-weight: 600;
+}
+
+/* Tips */
+.tipsBox {
+  padding: 12px 14px;
+  background: #f0f8e8;
+  border: 2px solid #78b040;
+  border-left: 4px solid #5a8830;
+}
+
+.tipsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.tipItem {
+  font-size: 13px;
+  color: var(--color-text, #2a1f14);
+  line-height: 1.7;
+  padding-left: 14px;
+  position: relative;
+}
+
+.tipItem::before {
+  content: "▶";
+  position: absolute;
+  left: 0;
+  font-size: 8px;
+  color: #5a8830;
+  top: 4px;
+}

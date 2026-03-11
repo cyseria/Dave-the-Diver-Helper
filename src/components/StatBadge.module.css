@@ -1,0 +1,53 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-surface-alt, #ede8dc);
+  border: 2px solid var(--color-border, #3d2b1f);
+  box-shadow: var(--pixel-shadow-sm, 2px 2px 0 #3d2b1f);
+  min-width: 100px;
+}
+
+.depth {
+  background: #e0eef5;
+  border-color: #2b5f80;
+  box-shadow: 2px 2px 0 #2b5f80;
+}
+
+.weapon {
+  background: var(--color-secondary-light, #e0f0e4);
+  border-color: var(--color-secondary, #6baf7a);
+  box-shadow: 2px 2px 0 var(--color-secondary, #6baf7a);
+}
+
+.rarity {
+  background: var(--color-primary-light, #fde8dc);
+  border-color: var(--color-primary, #e87040);
+  box-shadow: 2px 2px 0 var(--color-primary, #e87040);
+}
+
+.icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 10px;
+  color: var(--color-text-muted, #ada090);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+}
