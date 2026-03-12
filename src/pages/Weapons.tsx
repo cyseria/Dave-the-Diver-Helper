@@ -5,6 +5,7 @@ import {
   WEAPON_CATEGORIES,
   weaponsData,
 } from "../data/weapons";
+import { TabBar } from "../components/TabBar";
 import { usePlayerProgress } from "../store/usePlayerProgress";
 import type { Weapon, WeaponCategory, WeaponElement } from "../types";
 import styles from "./Weapons.module.css";
@@ -397,22 +398,20 @@ export function Weapons() {
     setSelectedId(null);
   }
 
+  const weaponTabs = WEAPON_CATEGORIES.map((cat) => ({
+    id: cat,
+    label: CATEGORY_LABELS[cat],
+    emoji: CATEGORY_EMOJI[cat],
+  }));
+
   return (
     <div className={styles.page}>
-      {/* Category tabs */}
-      <div className={styles.catTabs}>
-        {WEAPON_CATEGORIES.map((cat) => (
-          <button
-            type="button"
-            key={cat}
-            className={`${styles.catTab} ${cat === category ? styles.catTabActive : ""}`}
-            onClick={() => handleCategoryChange(cat)}
-          >
-            <span className={styles.catEmoji}>{CATEGORY_EMOJI[cat]}</span>
-            <span className={styles.catLabel}>{CATEGORY_LABELS[cat]}</span>
-          </button>
-        ))}
-      </div>
+      <TabBar
+        tabs={weaponTabs}
+        value={category}
+        onChange={handleCategoryChange}
+        aria-label="武器分类"
+      />
 
       {/* Main area */}
       <div className={styles.mainArea}>

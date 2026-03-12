@@ -1,32 +1,82 @@
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EncyclopediaLayout } from "../components/EncyclopediaLayout";
-import { fishData } from "../data/fish";
+import { TabBar } from "../components/TabBar";
+import type { TabItem } from "../components/TabBar";
 import { recipeData } from "../data/recipes";
 import { usePlayerProgress } from "../store/usePlayerProgress";
+import { RecipeTips } from "./RecipeTips";
 import styles from "./Recipes.module.css";
+
+type RecipesPageTab = "guide" | "tips";
+
+const PAGE_TABS: TabItem<RecipesPageTab>[] = [
+  { id: "guide", label: "食谱图鉴", emoji: "📖" },
+  { id: "tips", label: "推荐", emoji: "⭐" },
+];
+
+type RecipeSortKey = "unlocked" | "sellPrice" | "tastiness";
 
 export function Recipes() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [pageTab, setPageTab] = useState<RecipesPageTab>("guide");
+  const [sortKey, setSortKey] = useState<RecipeSortKey>("unlocked");
   const { unlockedRecipeIds, capturedFishIds, toggleRecipeUnlocked } =
     usePlayerProgress();
 
   const selected = id ? recipeData.find((r) => r.id === id) : null;
 
+  const sortedRecipes = useMemo(() => {
+    const withMeta = recipeData.map((r) => ({
+      r,
+      unlocked: unlockedRecipeIds.includes(r.id),
+    }));
+
+    withMeta.sort((a, b) => {
+      if (sortKey === "unlocked") {
+        if (a.unlocked !== b.unlocked) return a.unlocked ? -1 : 1;
+        return a.r.name.localeCompare(b.r.name, "zh-Hans-CN");
+      }
+      if (sortKey === "sellPrice") {
+        if (b.r.sellPrice !== a.r.sellPrice) return b.r.sellPrice - a.r.sellPrice;
+        return a.r.name.localeCompare(b.r.name, "zh-Hans-CN");
+      }
+      if (b.r.tastiness !== a.r.tastiness) return b.r.tastiness - a.r.tastiness;
+      return a.r.name.localeCompare(b.r.name, "zh-Hans-CN");
+    });
+
+    return withMeta.map((x) => x.r);
+  }, [sortKey, unlockedRecipeIds]);
+
   const listPanel = (
     <div className={styles.listWrap}>
       <div className={styles.listHeader}>
-        <span className={styles.listTitle}>食谱图鉴</span>
-        <span className={styles.listCount}>
-          <span className={styles.countUnlocked}>
-            {unlockedRecipeIds.length}
+        <div className={styles.listHeaderLeft}>
+          <span className={styles.listTitle}>食谱图鉴</span>
+          <span className={styles.listCount}>
+            <span className={styles.countUnlocked}>
+              {unlockedRecipeIds.length}
+            </span>
+            {" / "}
+            {recipeData.length}
           </span>
-          {" / "}
-          {recipeData.length}
-        </span>
+        </div>
+        <label className={styles.sortWrap}>
+          <span className={styles.sortLabel}>排序</span>
+          <select
+            className={styles.sortSelect}
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as RecipeSortKey)}
+          >
+            <option value="unlocked">是否已解锁（默认）</option>
+            <option value="sellPrice">出售价格（高 → 低）</option>
+            <option value="tastiness">美味度（高 → 低）</option>
+          </select>
+        </label>
       </div>
       <div className={styles.grid}>
-        {recipeData.map((recipe) => {
+        {sortedRecipes.map((recipe) => {
           const unlocked = unlockedRecipeIds.includes(recipe.id);
           const isSelected = recipe.id === id;
           return (
@@ -93,6 +143,13 @@ export function Recipes() {
               <span>🍽️</span>
               <span className={styles.metaStatLabel}>出餐量</span>
               <span className={styles.metaStatVal}>{selected.servings}</span>
+            </div>
+            <div className={styles.metaStat}>
+              <span>🔥</span>
+              <span className={styles.metaStatLabel}>工匠之火</span>
+              <span className={styles.metaStatVal}>
+                {selected.artisanFlameCost ?? "—"}
+              </span>
             </div>
           </div>
         </div>
@@ -163,11 +220,23 @@ export function Recipes() {
   ) : null;
 
   return (
-    <EncyclopediaLayout
-      listPanel={listPanel}
-      detailPanel={detailPanel}
-      hasSelection={!!selected}
-      emptyMessage="← 从左侧选择一个食谱查看详情"
-    />
+    <div className={styles.recipesPage}>
+      <TabBar
+        tabs={PAGE_TABS}
+        value={pageTab}
+        onChange={setPageTab}
+        aria-label="食谱页面切换"
+      />
+      {pageTab === "guide" ? (
+        <EncyclopediaLayout
+          listPanel={listPanel}
+          detailPanel={detailPanel}
+          hasSelection={!!selected}
+          emptyMessage="← 从左侧选择一个食谱查看详情"
+        />
+      ) : (
+        <RecipeTips />
+      )}
+    </div>
   );
 }

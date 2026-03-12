@@ -1,8 +1,16 @@
+/* ── Page wrapper with top TabBar ── */
+.recipesPage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* ── List / Grid ── */
 .listWrap {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .listHeader {
@@ -13,6 +21,14 @@
   border-bottom: var(--pixel-border, 2px solid #3d2b1f);
   background: var(--color-surface-alt, #ede8dc);
   flex-shrink: 0;
+  gap: 10px;
+}
+
+.listHeaderLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
 }
 
 .listTitle {
@@ -30,13 +46,39 @@
   color: var(--color-warning, #e8a040);
 }
 
+.sortWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sortLabel {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.sortSelect {
+  border: var(--pixel-border, 2px solid #3d2b1f);
+  background: var(--color-surface, #fffdf7);
+  box-shadow: var(--pixel-shadow-sm, 2px 2px 0 #3d2b1f);
+  padding: 6px 8px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  color: var(--color-text, #2a1f14);
+}
+
+.sortSelect:focus {
+  outline: 2px solid rgba(232, 112, 64, 0.45);
+  outline-offset: 2px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 10px;
-  overflow-y: auto;
-  flex: 1;
 }
 
 /* ── Card base ── */

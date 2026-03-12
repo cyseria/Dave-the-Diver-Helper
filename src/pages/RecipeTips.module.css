@@ -1,0 +1,241 @@
+/* ══════════════════════════════════════
+   PAGE SHELL — mirrors Staff levelsPage
+══════════════════════════════════════ */
+.outerPage {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: var(--color-bg, #f5f0e8);
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ══════════════════════════════════════
+   FILTER BAR
+══════════════════════════════════════ */
+.filterBar {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-family: inherit;
+  border: 1.5px solid rgba(61, 43, 31, 0.25);
+  background: var(--color-surface, #fff);
+  color: var(--color-text-muted, #ada090);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s, transform 0.1s, box-shadow 0.1s;
+  white-space: nowrap;
+}
+
+.filterChip:hover {
+  background: var(--color-surface-alt, #ede8dc);
+  color: var(--color-text, #2a1f14);
+  transform: translateY(-1px);
+}
+
+.filterChipActive {
+  border-color: #3d2b1f !important;
+  background: var(--color-surface-alt, #ede8dc) !important;
+  color: var(--color-text, #2a1f14) !important;
+  box-shadow: 2px 2px 0 rgba(61, 43, 31, 0.18);
+}
+
+/* Per-tag accent when active */
+.filterChip_mid.filterChipActive       { border-color: #c05820 !important; background: #fde8d8 !important; color: #a03010 !important; }
+.filterChip_late.filterChipActive      { border-color: #d97706 !important; background: #fef3c7 !important; color: #92400e !important; }
+.filterChip_tuna.filterChipActive      { border-color: #3b82f6 !important; background: #eff6ff !important; color: #1e3a8a !important; }
+.filterChip_sailfish.filterChipActive  { border-color: #8b5cf6 !important; background: #f5f3ff !important; color: #3730a3 !important; }
+.filterChip_shrimp.filterChipActive    { border-color: #f97316 !important; background: #fff7ed !important; color: #9a3412 !important; }
+.filterChip_shark.filterChipActive     { border-color: #22c55e !important; background: #f0fdf4 !important; color: #14532d !important; }
+.filterChip_lobster.filterChipActive   { border-color: #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; }
+.filterChip_jellyfish.filterChipActive { border-color: #a855f7 !important; background: #faf5ff !important; color: #6b21a8 !important; }
+
+.filterCount {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7.5px;
+  opacity: 0.6;
+  margin-left: 1px;
+}
+
+/* ══════════════════════════════════════
+   CARD GRID
+══════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+/* ══════════════════════════════════════
+   UNIFIED CARD
+══════════════════════════════════════ */
+.card {
+  background: var(--color-surface, #fff);
+  border: var(--pixel-border, 2px solid #3d2b1f);
+  box-shadow: 3px 3px 0 rgba(61, 43, 31, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(61, 43, 31, 0.15);
+}
+
+/* ── Tag strip at top ── */
+.cardTagStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 7px 10px;
+  border-bottom: 1.5px solid rgba(61, 43, 31, 0.12);
+  background: var(--color-surface-alt, #ede8dc);
+  min-height: 34px;
+}
+
+.cardTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+/* Tag theme colors */
+.tag_mid       { background: #fde8d8; border-color: #e87040; color: #a03010; }
+.tag_late      { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.tag_tuna      { background: #dbeafe; border-color: #60a5fa; color: #1e3a8a; }
+.tag_sailfish  { background: #ede9fe; border-color: #a78bfa; color: #3730a3; }
+.tag_shrimp    { background: #ffedd5; border-color: #fb923c; color: #9a3412; }
+.tag_shark     { background: #dcfce7; border-color: #4ade80; color: #14532d; }
+.tag_lobster   { background: #fee2e2; border-color: #f87171; color: #991b1b; }
+.tag_jellyfish { background: #f3e8ff; border-color: #c084fc; color: #6b21a8; }
+
+/* ── Card body ── */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 12px 14px;
+  flex: 1;
+}
+
+.cardTop {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.cardEmoji {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cardNameWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cardBadge {
+  display: inline-flex;
+  padding: 1px 7px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 6.5px;
+  background: #fde68a;
+  border: 1px solid #d97706;
+  color: #92400e;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.cardName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text, #2a1f14);
+  line-height: 1.35;
+}
+
+.cardUnlock {
+  font-size: 10px;
+  color: var(--color-text-muted, #ada090);
+  white-space: nowrap;
+}
+
+.cardStats {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.cardHighlight {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e87040;
+  line-height: 1.4;
+}
+
+.cardIngredients {
+  font-size: 10.5px;
+  color: var(--color-text-muted, #ada090);
+  line-height: 1.6;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(61, 43, 31, 0.15);
+}
+
+.cardTip {
+  padding: 6px 10px;
+  background: #f0fdf4;
+  border-left: 3px solid #22c55e;
+  font-size: 11px;
+  color: #166534;
+  line-height: 1.5;
+}
+
+/* ── Stat Badge ── */
+.statBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 7px;
+  border: 1.5px solid;
+}
+
+.statIcon { font-size: 11px; line-height: 1; }
+
+.statBody {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.statVal   { font-family: "Press Start 2P", monospace; font-size: 8px; }
+.statLabel { font-size: 8.5px; opacity: 0.8; }
+
+.stat_price    { background: #fef9c3; border-color: #fbbf24; color: #78350f; }
+.stat_taste    { background: #fce7f3; border-color: #f472b6; color: #831843; }
+.stat_servings { background: #e0f2fe; border-color: #38bdf8; color: #0c4a6e; }

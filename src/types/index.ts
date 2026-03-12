@@ -44,20 +44,43 @@ export interface Weapon {
 }
 export type Rarity = "common" | "uncommon" | "rare" | "legendary";
 export type MarkerType = "fish" | "treasure" | "boss";
+export type FishTime = "day" | "night" | "day_night";
+export type FishCategory =
+  | "normal"
+  | "photo"
+  | "boss"
+  | "seahorse"
+  | "trap";
 
 export interface Fish {
   id: string;
   name: string;
   emoji: string;
   stars: number; // 1–5 stars
-  depthMin: number;
-  depthMax: number;
-  hp: number;
-  attack: number;
-  recommendedWeapon: WeaponType;
-  rarity: Rarity;
+  depthMin?: number;
+  depthMax?: number;
+  hp?: number;
+  attack?: number;
+  recommendedWeapon?: WeaponType;
+  rarity?: Rarity;
   recipeIds: string[];
+  description?: string;
+  rank?: number; // Marinca rank
+  time?: FishTime;
+  zones?: string[]; // module ids
+  habitat?: string; // sub-area note
+  category?: FishCategory;
+  source?: string[]; // source notes
+  note?: string; // special note / capture tip
+}
+
+export interface FishGuideModule {
+  id: string;
+  name: string;
   description: string;
+  tips?: string[];
+  fishIds: string[];
+  sources?: string[];
 }
 
 export interface Ingredient {
@@ -77,6 +100,7 @@ export interface Recipe {
   sellPrice: number;
   tastiness: number; // 美味度
   servings: number; // 出餐量
+  artisanFlameCost?: number; // 工匠之火（用于研究/解锁新食谱的消耗）
   obtainMethod: string; // 获取方式
   description: string;
   ingredients: Ingredient[];

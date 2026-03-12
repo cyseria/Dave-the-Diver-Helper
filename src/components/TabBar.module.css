@@ -1,0 +1,66 @@
+/* 统一的路由下子 Tab 样式：pixel 风、字号与风格一致 */
+
+.tabBar {
+  display: flex;
+  gap: 0;
+  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
+  background: var(--color-surface-alt, #ede8dc);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(61, 43, 31, 0.2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  color: var(--color-text-muted, #ada090);
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab:hover {
+  background: rgba(232, 112, 64, 0.08);
+  color: var(--color-text, #2a1f14);
+}
+
+.tabActive {
+  background: var(--color-primary-soft, #fde8d8);
+  color: #a03010;
+  border-bottom: 2px solid var(--color-primary, #e87040);
+  margin-bottom: -2px;
+}
+
+.tabEmoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tabLabel {
+  color: inherit;
+}
+
+.tabActive .tabLabel {
+  color: inherit;
+}
+
+.tabCount {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-success, #5aa469);
+  margin-left: 2px;
+}
+
+.tabActive .tabCount {
+  color: var(--color-success, #5aa469);
+}

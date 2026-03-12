@@ -3,76 +3,28 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
   background: var(--color-bg, #f5f0e8);
-}
-
-/* ── Category tabs ── */
-.catTabs {
-  display: flex;
-  gap: 0;
-  border-bottom: var(--pixel-border, 2px solid #3d2b1f);
-  background: var(--color-surface-alt, #ede8dc);
-  flex-shrink: 0;
-  overflow-x: auto;
-}
-
-.catTab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: transparent;
-  border: none;
-  border-right: 1px solid rgba(61, 43, 31, 0.2);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.1s, color 0.1s;
-}
-
-.catTab:last-child {
-  border-right: none;
-}
-
-.catTab:hover {
-  background: rgba(232, 112, 64, 0.08);
-}
-
-.catTabActive {
-  background: var(--color-primary-soft, #fde8d8);
-  border-bottom: 2px solid var(--color-primary, #e87040);
-  margin-bottom: -2px;
-}
-
-.catTabActive .catLabel {
-  color: #a03010;
-}
-
-.catEmoji {
-  font-size: 16px;
-}
-
-.catLabel {
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  color: var(--color-text, #2a1f14);
 }
 
 /* ── Main area ── */
 .mainArea {
   display: flex;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 /* ── Tree panel ── */
 .treePanel {
   flex: 1;
+  min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   border-right: var(--pixel-border, 2px solid #3d2b1f);
   overflow: hidden;
-  min-width: 0;
 }
 
 .treePanelHeader {

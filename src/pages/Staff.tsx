@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EncyclopediaLayout } from "../components/EncyclopediaLayout";
+import { TabBar } from "../components/TabBar";
 import { restaurantTiers, staffCombos, staffData } from "../data/staff";
 import { usePlayerProgress } from "../store/usePlayerProgress";
+import { StaffTips } from "./StaffTips";
 import type { StaffRole } from "../types";
 import styles from "./Staff.module.css";
 
@@ -57,16 +59,6 @@ export function Staff() {
   // ── Grid list panel ───────────────────────────────────────────────────────
   const listPanel = (
     <div className={styles.listWrap}>
-      <div className={styles.listHeader}>
-        <span className={styles.listTitle}>班初寿司员工</span>
-        <span className={styles.listCount}>
-          <span style={{ color: "var(--color-success, #5aa469)" }}>
-            {hiredStaffIds.length}
-          </span>
-          {" / "}
-          {staffData.length}
-        </span>
-      </div>
       <div className={styles.grid}>
         {staffData.map((staff) => {
           const hired = hiredStaffIds.includes(staff.id);
@@ -257,24 +249,25 @@ export function Staff() {
     </div>
   ) : null;
 
+  const staffTabs = [
+    {
+      id: "staff" as const,
+      label: "员工图鉴",
+      emoji: "👥",
+      count: `${hiredStaffIds.length}/${staffData.length}`,
+    },
+    { id: "levels" as const, label: "餐厅等级", emoji: "🏮" },
+    { id: "tips" as const, label: "推荐", emoji: "⭐" },
+  ];
+
   return (
     <div className={styles.staffPage}>
-      <div className={styles.tabBar}>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${tab === "staff" ? styles.tabBtnActive : ""}`}
-          onClick={() => setTab("staff")}
-        >
-          👥 员工图鉴
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${tab === "levels" ? styles.tabBtnActive : ""}`}
-          onClick={() => setTab("levels")}
-        >
-          🏮 餐厅等级
-        </button>
-      </div>
+      <TabBar
+        tabs={staffTabs}
+        value={tab}
+        onChange={(id) => setTab(id)}
+        aria-label="员工与餐厅"
+      />
 
       {tab === "staff" ? (
         <EncyclopediaLayout
@@ -283,8 +276,10 @@ export function Staff() {
           hasSelection={!!selected}
           emptyMessage="← 从左侧选择一名员工查看详情"
         />
-      ) : (
+      ) : tab === "levels" ? (
         <RestaurantLevelsPage />
+      ) : (
+        <StaffTips />
       )}
     </div>
   );
@@ -366,42 +361,6 @@ function RestaurantLevelsPage() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Recommended combos */}
-        <div className={styles.combosSection}>
-          <h3 className={styles.combosTitle}>🤝 推荐员工搭配</h3>
-          <div className={styles.combosGrid}>
-            {staffCombos.map((combo) => (
-              <div key={combo.id} className={styles.comboCard}>
-                <div className={styles.comboCardHeader}>
-                  <span className={styles.comboEmoji}>{combo.emoji}</span>
-                  <div>
-                    <div className={styles.comboName}>{combo.name}</div>
-                    <span className={styles.comboTag}>{combo.tag}</span>
-                  </div>
-                </div>
-                <div className={styles.comboMembers}>
-                  {combo.staffIds.map((sid) => {
-                    const s = staffData.find((x) => x.id === sid);
-                    if (!s) return null;
-                    return (
-                      <span
-                        key={sid}
-                        className={`${styles.comboMemberChip} ${styles[`comboMemberChip_${s.role}`]}`}
-                      >
-                        {s.emoji} {s.name}
-                        <span className={styles.comboMemberRole}>
-                          {ROLE_LABELS[s.role]}
-                        </span>
-                      </span>
-                    );
-                  })}
-                </div>
-                <p className={styles.comboDesc}>{combo.description}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Training costs */}

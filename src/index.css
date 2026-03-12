@@ -10,18 +10,24 @@ html {
   font-size: 16px;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden; /* 禁止整页滚动，只允许模块内滚动 */
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: #ddd8cc;
   color: var(--color-text, #2a1f14);
-  min-height: 100vh;
   line-height: 1.6;
 }
 
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
 }
 
 a {

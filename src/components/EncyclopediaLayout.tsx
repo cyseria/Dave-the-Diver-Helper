@@ -16,7 +16,9 @@ export function EncyclopediaLayout({
 }: EncyclopediaLayoutProps) {
   return (
     <div className={styles.layout}>
-      <aside className={styles.list}>{listPanel}</aside>
+      <aside className={styles.list}>
+        <div className={styles.listScroll}>{listPanel}</div>
+      </aside>
       <main className={styles.detail}>
         {hasSelection ? (
           detailPanel

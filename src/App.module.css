@@ -1,7 +1,7 @@
 .appShell {
   /* Fluid layout: small side padding, no hard max-width */
   margin: 0 24px;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: var(--color-bg, #f5f0e8);

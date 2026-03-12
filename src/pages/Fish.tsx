@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EncyclopediaLayout } from "../components/EncyclopediaLayout";
+import { TabBar } from "../components/TabBar";
 import { fishData } from "../data/fish";
+import { fishGuideModules } from "../data/fishGuideModules";
 import { recipeData } from "../data/recipes";
 import { usePlayerProgress } from "../store/usePlayerProgress";
-import { theme } from "../theme.config";
 import styles from "./Fish.module.css";
 
 const WEAPON_LABELS: Record<string, string> = {
@@ -15,18 +16,20 @@ const WEAPON_LABELS: Record<string, string> = {
   none: "—",
 };
 
+const FISH_MODULE_EMOJI: Record<string, string> = {
+  "blue-hole-entrance": "🌊",
+  "blue-hole-mid": "🛳️",
+  "blue-hole-depths": "🐙",
+  "night-only": "🌙",
+  "glacier-passage": "🧊",
+  "glacial-area": "❄️",
+  "hydrothermal-vents": "🌋",
+  seahorses: "🐴",
+  "fish-trap": "🦞",
+};
+
 const STAR_POSITIONS = [1, 2, 3] as const;
 
-/**
- * Interactive star rating — pixel game style.
- *
- * States:
- * - uncaptured  : all gray; hovering shows preview; click = capture + rate
- * - captured    : colored per rating; hovering over top star = uncapture warning
- *
- * Hover preview: hovering over star N previews 1-N lit (so user knows what will happen)
- * Uncapture hint: hovering the current top star turns all to warning red
- */
 function StarRating({
   stars,
   captured,
@@ -41,22 +44,16 @@ function StarRating({
   const [animStar, setAnimStar] = useState<number | null>(null);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
 
-  // Hovering the current top active star → shows uncapture warning
   const isUncaptureHint = captured && hoverStar === stars;
 
   const getSpanClass = (pos: number): string => {
-    // While a click animation is playing, don't change the color mid-animation
     if (animStar === pos) return styles.starFilled;
-
     if (isUncaptureHint) {
-      // All lit stars turn warning-red to signal "will remove"
       return pos <= stars ? styles.starWarning : styles.starGray;
     }
     if (hoverStar !== null) {
-      // Preview: stars 1..hoverStar light up in preview-gold
       return pos <= hoverStar ? styles.starPreview : styles.starGray;
     }
-    // Normal state
     return captured && pos <= stars ? styles.starFilled : styles.starGray;
   };
 
@@ -103,6 +100,9 @@ function StarRating({
 export function Fish() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [selectedModuleId, setSelectedModuleId] = useState<string>(
+    fishGuideModules[0]?.id ?? "blue-hole-entrance",
+  );
   const {
     capturedFishIds,
     fishStarRatings,
@@ -115,74 +115,107 @@ export function Fish() {
     ? recipeData.filter((r) => selected.recipeIds.includes(r.id))
     : [];
 
-  // 0 means "cleared / no custom rating" → fall back to fish default
+  const selectedModule =
+    fishGuideModules.find((m) => m.id === selectedModuleId) ??
+    fishGuideModules[0];
+
+  const moduleFish = selectedModule
+    ? selectedModule.fishIds
+        .map((fishId) => fishData.find((f) => f.id === fishId))
+        .filter((f): f is NonNullable<typeof f> => !!f)
+    : fishData;
+
   const getStars = (fishId: string, defaultStars: number) =>
     fishStarRatings[fishId] || defaultStars;
 
+  const getTimeLabel = (time?: string) =>
+    time === "night" ? "夜" : time === "day_night" ? "昼夜" : "昼";
+
+  const getEstimatedStats = (fish: (typeof fishData)[number]) => {
+    if (fish.hp !== undefined && fish.attack !== undefined) {
+      return { hp: fish.hp, attack: fish.attack, estimated: false };
+    }
+
+    const base = Math.max(1, fish.stars);
+    let hp = base * 120;
+    let attack = base * 12;
+
+    if (fish.category === "boss") {
+      hp *= 4;
+      attack *= 3;
+    } else if (fish.category === "seahorse") {
+      hp = 30;
+      attack = 0;
+    } else if (fish.category === "trap") {
+      hp = 10;
+      attack = 0;
+    }
+
+    return { hp, attack, estimated: true };
+  };
+
+  const getCaptureTip = () => {
+    if (!selected) return null;
+    if (selected.note) return selected.note;
+    if (selected.category === "seahorse") return "需要虫网捕捉";
+    if (selected.category === "trap") return "只能使用鱼笼/蟹笼捕获";
+    if (selected.category === "boss")
+      return "建议先麻醉或用渔网捕获，避免损伤提升三星率";
+    return selectedModule?.tips?.[0] ?? null;
+  };
+
   const listPanel = (
     <div className={styles.listWrap}>
-      <div className={styles.listHeader}>
-        <span className={styles.listTitle}>鱼类图鉴</span>
-        <span className={styles.listCount}>
-          <span style={{ color: theme.colors.success }}>
-            {capturedFishIds.length}
-          </span>
-          {" / "}
-          {fishData.length}
-        </span>
-      </div>
       <div className={styles.grid}>
-        {fishData.map((fish) => {
+        {moduleFish.map((fish) => {
           const captured = capturedFishIds.includes(fish.id);
           const isSelected = fish.id === id;
-          const displayStars = getStars(fish.id, fish.stars);
-
-          // Tier styling only applies when the fish is captured
-          const tierClass = !captured
-            ? styles.cardUncaptured
-            : displayStars === 1
-              ? styles.card1star
-              : displayStars === 2
-                ? styles.card2star
-                : styles.card3star;
-
+          const depthText =
+            fish.depthMin !== undefined && fish.depthMax !== undefined
+              ? `${fish.depthMin}-${fish.depthMax}m`
+              : "—";
           return (
             <div
               key={fish.id}
-              className={`${styles.card} ${tierClass} ${isSelected ? styles.cardSelected : ""}`}
+              className={`${styles.card} ${captured ? styles.cardCaptured : ""} ${isSelected ? styles.cardSelected : ""}`}
               onClick={() => navigate(`/fish/${fish.id}`)}
               onKeyDown={(e) =>
                 e.key === "Enter" && navigate(`/fish/${fish.id}`)
               }
-              // biome-ignore lint/a11y/noNoninteractiveTabindex: card with nested interactive elements
+              title={fish.name}
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: card with nested toggle button
               tabIndex={0}
             >
               <div className={styles.cardImg}>
-                <span className={styles.cardEmoji}>{fish.emoji}</span>
-                <div className={styles.starsOverlay}>
+                <div className={styles.cardStarsOverlay}>
                   <StarRating
-                    stars={displayStars}
+                    stars={getStars(fish.id, fish.stars)}
                     captured={captured}
                     size="sm"
                     onRate={(n) => {
+                      const currentStars = getStars(fish.id, fish.stars);
                       if (!captured) {
-                        // First time: capture + set rating
                         toggleFishCaptured(fish.id);
                         setFishStarRating(fish.id, n);
-                      } else if (displayStars === n) {
-                        // Clicking current top star: remove capture + clear rating
+                      } else if (currentStars === n) {
                         toggleFishCaptured(fish.id);
                         setFishStarRating(fish.id, 0);
                       } else {
-                        // Already captured, just change rating
                         setFishStarRating(fish.id, n);
                       }
                     }}
                   />
                 </div>
+                <span className={styles.cardEmoji}>{fish.emoji}</span>
               </div>
               <div className={styles.cardFooter}>
                 <span className={styles.cardName}>{fish.name}</span>
+                <div className={styles.cardMeta}>
+                  <span className={styles.cardMetaItem}>{depthText}</span>
+                  <span className={styles.cardMetaItem}>
+                    {getTimeLabel(fish.time)}
+                  </span>
+                </div>
               </div>
             </div>
           );
@@ -193,7 +226,6 @@ export function Fish() {
 
   const detailPanel = selected ? (
     <div className={styles.detail}>
-      {/* Header */}
       <div className={styles.detailTop}>
         <div className={styles.detailImgBox}>
           <span className={styles.detailEmoji}>{selected.emoji}</span>
@@ -218,7 +250,9 @@ export function Fish() {
             }}
           />
           <h1 className={styles.detailName}>{selected.name}</h1>
-          <p className={styles.detailDesc}>{selected.description}</p>
+          <p className={styles.detailDesc}>
+            {selected.description ?? "暂无描述"}
+          </p>
         </div>
         <button
           type="button"
@@ -229,38 +263,76 @@ export function Fish() {
         </button>
       </div>
 
-      {/* Stats */}
-      <div className={styles.statsGrid}>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}>🌊</span>
-          <span className={styles.statLabel}>深度范围</span>
-          <span className={styles.statValue}>
-            {selected.depthMin}–{selected.depthMax}m
+      <div className={styles.infoGrid}>
+        {(() => {
+          const stats = getEstimatedStats(selected);
+          return (
+            <>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>
+                  HP{stats.estimated ? " (估)" : ""}
+                </span>
+                <span className={styles.infoValue}>{stats.hp}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>
+                  ATK{stats.estimated ? " (估)" : ""}
+                </span>
+                <span className={styles.infoValue}>{stats.attack}</span>
+              </div>
+            </>
+          );
+        })()}
+        <div className={styles.infoItem}>
+          <span className={styles.infoLabel}>Region</span>
+          <span className={styles.infoValue}>
+            {selected.zones?.length
+              ? selected.zones
+                  .map((z) =>
+                    fishGuideModules.find((m) => m.id === z)?.name ?? z,
+                  )
+                  .join(" / ")
+              : "—"}
           </span>
         </div>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}>❤️</span>
-          <span className={styles.statLabel}>血量</span>
-          <span className={styles.statValue}>{selected.hp}</span>
+        <div className={styles.infoItem}>
+          <span className={styles.infoLabel}>Depth</span>
+          <span className={styles.infoValue}>
+            {selected.depthMin !== undefined && selected.depthMax !== undefined
+              ? `${selected.depthMin}–${selected.depthMax}m`
+              : "—"}
+          </span>
         </div>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}>⚡</span>
-          <span className={styles.statLabel}>攻击力</span>
-          <span className={styles.statValue}>{selected.attack}</span>
+        <div className={styles.infoItem}>
+          <span className={styles.infoLabel}>Active Time</span>
+          <span className={styles.infoValue}>
+            {selected.time === "night"
+              ? "Night"
+              : selected.time === "day_night"
+                ? "Day & Night"
+                : "Day"}
+          </span>
         </div>
-        <div className={styles.statItem}>
-          <span className={styles.statIcon}>🔫</span>
-          <span className={styles.statLabel}>推荐武器</span>
-          <span className={styles.statValue}>
-            {WEAPON_LABELS[selected.recommendedWeapon] ?? "—"}
+        <div className={styles.infoItem}>
+          <span className={styles.infoLabel}>Recommended Weapon</span>
+          <span className={styles.infoValue}>
+            {selected.recommendedWeapon
+              ? WEAPON_LABELS[selected.recommendedWeapon] ?? "—"
+              : "—"}
           </span>
         </div>
       </div>
 
-      {/* Recipes */}
+      {getCaptureTip() ? (
+        <div className={styles.tipCard}>
+          <span className={styles.tipTitle}>⭐⭐⭐ 捕获技巧</span>
+          <span className={styles.tipText}>{getCaptureTip()}</span>
+        </div>
+      ) : null}
+
       {relatedRecipes.length > 0 && (
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>🍽️ 可制作料理</h3>
+          <h3 className={styles.sectionTitle}>🍽️ 关联食谱</h3>
           <div className={styles.recipeRow}>
             {relatedRecipes.map((r) => (
               <button
@@ -278,26 +350,48 @@ export function Fish() {
         </div>
       )}
 
-      {/* Map */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>📍 地图位置</h3>
-        <button
-          type="button"
-          className={styles.mapBtn}
-          onClick={() => navigate("/map")}
-        >
-          🗺️ 在地图中查看出没地点
-        </button>
-      </div>
+      {(selected.note || selected.habitat) && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>📝 备注</h3>
+          <div className={styles.notesList}>
+            {selected.note && <span>• {selected.note}</span>}
+            {selected.habitat && <span>• {selected.habitat}</span>}
+          </div>
+        </div>
+      )}
+
     </div>
   ) : null;
 
+  const fishTabs = fishGuideModules.map((module) => {
+    const moduleFishList = module.fishIds
+      .map((fishId) => fishData.find((f) => f.id === fishId))
+      .filter((f): f is NonNullable<typeof f> => !!f);
+    const capturedCount = moduleFishList.filter((f) =>
+      capturedFishIds.includes(f.id),
+    ).length;
+    return {
+      id: module.id,
+      label: module.name,
+      emoji: FISH_MODULE_EMOJI[module.id] ?? "🐟",
+      count: `${capturedCount}/${moduleFishList.length}`,
+    };
+  });
+
   return (
-    <EncyclopediaLayout
-      listPanel={listPanel}
-      detailPanel={detailPanel}
-      hasSelection={!!selected}
-      emptyMessage="← 从左侧选择一种鱼类查看详情"
-    />
+    <div className={styles.page}>
+      <TabBar
+        tabs={fishTabs}
+        value={selectedModuleId}
+        onChange={setSelectedModuleId}
+        aria-label="鱼类图鉴区域"
+      />
+      <EncyclopediaLayout
+        listPanel={listPanel}
+        detailPanel={detailPanel}
+        hasSelection={!!selected}
+        emptyMessage="← 从左侧选择一条鱼查看详情"
+      />
+    </div>
   );
 }

@@ -156,7 +156,7 @@ export function Home() {
               icon={nextFish.emoji}
               category="下一条鱼"
               title={nextFish.name}
-              description={`深度 ${nextFish.depthMin}–${nextFish.depthMax}m | ${nextFish.description}`}
+              description={`${nextFish.depthMin !== undefined && nextFish.depthMax !== undefined ? `深度 ${nextFish.depthMin}–${nextFish.depthMax}m` : "深度未知"} | ${nextFish.description ?? "暂无描述"}`}
               actionLabel="查看图鉴"
               onAction={() => navigate(`/fish/${nextFish.id}`)}
             />
