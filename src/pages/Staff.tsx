@@ -51,7 +51,7 @@ function StatBar({
 export function Staff() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"staff" | "levels" | "tips">("staff");
+  const [tab, setTab] = useState<"staff" | "levels" | "tips">("tips");
   const { hiredStaffIds, toggleStaffHired } = usePlayerProgress();
 
   const selected = id ? staffData.find((s) => s.id === id) : null;
@@ -259,6 +259,7 @@ export function Staff() {
   ) : null;
 
   const staffTabs = [
+    { id: "tips" as const, label: "推荐", emoji: "⭐" },
     {
       id: "staff" as const,
       label: "员工图鉴",
@@ -266,7 +267,6 @@ export function Staff() {
       count: `${hiredStaffIds.length}/${staffData.length}`,
     },
     { id: "levels" as const, label: "餐厅等级", emoji: "🏮" },
-    { id: "tips" as const, label: "推荐", emoji: "⭐" },
   ];
 
   return (

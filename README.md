@@ -1,12 +1,22 @@
 # Dave the Diver Helper
 
-React + TypeScript + Bun 前端项目脚手架
+《潜水员戴夫》游戏辅助工具：鱼类图鉴、食谱、员工、武器、地图与任务查询。
 
-## 前置要求
+**在线访问**：https://cyseria.github.io/dave-diver-helper
 
-- [Bun](https://bun.sh) >= 1.0.0
+## 功能
+
+- **首页**：快捷入口与进度概览
+- **鱼类图鉴**：按海域/昼夜筛选，捕获与升级记录
+- **食谱**：食谱图鉴、强化消耗与推荐
+- **员工**：员工图鉴、餐厅等级与推荐搭配
+- **武器**：武器图鉴与升级路线
+- **地图**：海域地图与节点信息
+- **任务**：任务列表与完成状态
 
 ## 快速开始
+
+- [Bun](https://bun.sh) >= 1.0.0
 
 ```bash
 # 安装依赖
@@ -14,27 +24,4 @@ bun install
 
 # 启动开发服务器
 bun run dev
-
-# 构建生产版本
-bun run build
-
-# 预览生产构建
-bun run preview
-
-# Lint 检查
-bun run lint
-
-# 格式化代码
-bun run format
-
-# Lint + 格式化 + 整理 import（一键修复）
-bun run check
 ```
-
-## 技术栈
-
-- **React 18** - UI 框架
-- **TypeScript** - 类型安全
-- **Vite** - 构建工具
-- **Bun** - 包管理与运行环境
-- **Biome** - Lint + 格式化（替代 ESLint + Prettier）

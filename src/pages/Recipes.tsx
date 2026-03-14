@@ -11,8 +11,8 @@ import styles from "./Recipes.module.css";
 
 type RecipesPageTab = "guide" | "tips";
 const PAGE_TABS: TabItem<RecipesPageTab>[] = [
-  { id: "guide", label: "食谱图鉴", emoji: "📖" },
   { id: "tips", label: "推荐", emoji: "⭐" },
+  { id: "guide", label: "食谱图鉴", emoji: "📖" },
 ];
 
 type RecipeSortKey = "level" | "sellPrice" | "tastiness";
@@ -59,7 +59,7 @@ const MAX_ENHANCE = 10;
 export function Recipes() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [pageTab, setPageTab] = useState<RecipesPageTab>("guide");
+  const [pageTab, setPageTab] = useState<RecipesPageTab>("tips");
   const [sortKey, setSortKey] = useState<RecipeSortKey>("level");
   const { recipeEnhanceLevels, setRecipeEnhanceLevel, capturedFishIds } =
     usePlayerProgress();
