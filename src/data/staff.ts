@@ -1,14 +1,5 @@
 import type { RestaurantTier, Staff } from "../types";
 
-export interface StaffCombo {
-  id: string;
-  name: string;
-  emoji: string;
-  description: string;
-  staffIds: string[];
-  tag: string; // e.g. "新手必备" / "效率最高"
-}
-
 export const staffData: Staff[] = [
   {
     id: "maki",
@@ -131,33 +122,6 @@ export const staffData: Staff[] = [
       },
     ],
     maxStats: { cooking: 908, serving: 248, procure: 323, appeal: 129 },
-  },
-  {
-    id: "liu",
-    name: "柳",
-    emoji: "👩",
-    role: "dispatch",
-    tier: "B",
-    hiringFee: 125,
-    dailyWage: 32,
-    description:
-      "筹备属性突出，适合常驻派遣，服务也不低，可作为过渡型全能员工。",
-    skills: [
-      {
-        level: 3,
-        name: "清洁",
-        description: "可以清理桌面污渍",
-        isDish: false,
-      },
-      { level: 7, name: "服务+", description: "服务属性 +50", isDish: false },
-      {
-        level: 15,
-        name: "比目鱼押寿司",
-        description: "解锁专属菜谱：比目鱼押寿司",
-        isDish: true,
-      },
-    ],
-    maxStats: { cooking: 550, serving: 455, procure: 780, appeal: 509 },
   },
   {
     id: "davina",
@@ -484,6 +448,118 @@ export const staffData: Staff[] = [
     maxStats: { cooking: 126, serving: 986, procure: 425, appeal: 138 },
   },
   {
+    id: "raoul",
+    name: "拉乌尔",
+    emoji: "🍸",
+    role: "kitchen",
+    tier: "S",
+    hiringFee: 0,
+    dailyWage: 0,
+    recommendTip: "饮料制造达人全场所有饮料 +10 金，食材处理达人 10% 额外出餐，后厨核心。",
+    description: "饮料制造达人 + 食材处理达人，四维均衡，旗舰店后厨推荐。",
+    skills: [
+      { level: 3, name: "饮料制造达人", description: "全场所有饮料 +10 金", isDish: false },
+      { level: 7, name: "食材处理达人", description: "10% 概率额外出餐", isDish: false },
+    ],
+    maxStats: { cooking: 541, serving: 541, procure: 541, appeal: 541 },
+  },
+  {
+    id: "cain",
+    name: "凯因",
+    emoji: "💵",
+    role: "hall",
+    tier: "A",
+    hiringFee: 0,
+    dailyWage: 0,
+    recommendTip: "鸡尾酒服务 + 小费达人，服务 914 极高，大堂优质选择。",
+    description: "鸡尾酒服务与小费达人，服务属性突出。",
+    skills: [
+      { level: 3, name: "鸡尾酒服务", description: "可以为顾客调制并服务鸡尾酒", isDish: false },
+      { level: 7, name: "小费达人", description: "服务顾客后必定获得小费", isDish: false },
+    ],
+    maxStats: { cooking: 360, serving: 914, procure: 150, appeal: 672 },
+  },
+  {
+    id: "pai",
+    name: "派",
+    emoji: "👴",
+    role: "dispatch",
+    tier: "A",
+    hiringFee: 467,
+    dailyWage: 40,
+    recommendTip: "筹备 914 很高，兼顾料理与服务，前中期过渡好用。",
+    description: "全能型员工，属性均衡且筹备突出，适合派遣或补位。",
+    skills: [
+      { level: 3, name: "料理+", description: "料理属性 +50", isDish: false },
+      { level: 7, name: "服务+", description: "服务属性 +50", isDish: false },
+    ],
+    maxStats: { cooking: 594, serving: 466, procure: 914, appeal: 418 },
+  },
+  {
+    id: "yusuke",
+    name: "裕介",
+    emoji: "🧑‍🍳",
+    role: "dispatch",
+    tier: "A",
+    hiringFee: 608,
+    dailyWage: 60,
+    recommendTip: "筹备 986 近乎天花板，料理 850 也很高，派遣/后厨两用。",
+    description: "高筹备高料理的多面手员工，资源紧张时非常实用。",
+    skills: [
+      { level: 3, name: "料理+", description: "料理属性 +50", isDish: false },
+      { level: 7, name: "食材处理高手", description: "5% 概率增加出餐份数", isDish: false },
+    ],
+    maxStats: { cooking: 850, serving: 218, procure: 986, appeal: 160 },
+  },
+  {
+    id: "michelle",
+    name: "米歇尔",
+    emoji: "🧑",
+    role: "hall",
+    tier: "A",
+    hiringFee: 258,
+    dailyWage: 45,
+    recommendTip: "魅力 981 极高，服务 792 也很优秀，是大堂型员工。",
+    description: "高服务高魅力的大堂员工，适合负责饮料与跑堂。",
+    skills: [
+      { level: 3, name: "饮料服务", description: "可以为顾客提供饮料服务", isDish: false },
+      { level: 7, name: "服务+", description: "服务属性 +50", isDish: false },
+    ],
+    maxStats: { cooking: 407, serving: 792, procure: 29, appeal: 981 },
+  },
+  {
+    id: "carolina",
+    name: "卡罗莱娜",
+    emoji: "🧑‍🍳",
+    role: "dispatch",
+    tier: "A",
+    hiringFee: 410,
+    dailyWage: 40,
+    recommendTip: "筹备 810 很高，带芥末补充与小费达人，派遣/补位都不错。",
+    description: "筹备突出，技能偏功能性，适合派遣或餐厅补位。",
+    skills: [
+      { level: 3, name: "补充山葵", description: "可自动为寿司台补充山葵", isDish: false },
+      { level: 7, name: "小费达人", description: "服务顾客后必定获得小费", isDish: false },
+    ],
+    maxStats: { cooking: 621, serving: 417, procure: 810, appeal: 449 },
+  },
+  {
+    id: "jandi",
+    name: "詹迪",
+    emoji: "🧑",
+    role: "hall",
+    tier: "A",
+    hiringFee: 302,
+    dailyWage: 35,
+    recommendTip: "均衡型员工，带芥末补充+小费达人，适合经理/大堂过渡。",
+    description: "属性均衡的大堂员工，可承担芥末补充与小费收益。",
+    skills: [
+      { level: 3, name: "补充山葵", description: "可自动为寿司台补充山葵", isDish: false },
+      { level: 7, name: "小费达人", description: "服务顾客后必定获得小费", isDish: false },
+    ],
+    maxStats: { cooking: 542, serving: 579, procure: 510, appeal: 506 },
+  },
+  {
     id: "chitose",
     name: "千岁",
     emoji: "👸",
@@ -511,45 +587,6 @@ export const staffData: Staff[] = [
       },
     ],
     maxStats: { cooking: 876, serving: 726, procure: 726, appeal: 726 },
-  },
-];
-
-export const staffCombos: StaffCombo[] = [
-  {
-    id: "starter",
-    name: "开局三件套",
-    emoji: "🌱",
-    tag: "新手必备",
-    staffIds: ["maki", "kyoko", "davina"],
-    description:
-      "真纪主厨保障出餐速度，杏子跑堂服务顾客，达比纳派遣稳定食材供应——三人全部免费或极低费用获得，是最省钱的开局配置。",
-  },
-  {
-    id: "hall-master",
-    name: "跑堂解放套",
-    emoji: "🛎️",
-    tag: "效率最高",
-    staffIds: ["maki", "itsuki", "el-nino"],
-    description:
-      "树 + 埃尔尼诺双大堂覆盖饮料服务与清理，戴夫几乎可以专心潜水。真纪坐镇后厨，三人分工明确，黄金餐厅阶段首选。",
-  },
-  {
-    id: "all-star",
-    name: "全明星阵容",
-    emoji: "👑",
-    tag: "后期终极",
-    staffIds: ["yone", "el-nino", "drae", "davina"],
-    description:
-      "米仓顶级后厨，埃尔尼诺满编大堂，德瑞兼顾前后厅还解锁三张菜谱，达比纳负责派遣与分店。四人齐聚后餐厅进入自动运营状态。",
-  },
-  {
-    id: "cocktail",
-    name: "饮品营收套",
-    emoji: "🍹",
-    tag: "金币最多",
-    staffIds: ["maki", "raptor", "drae", "davina"],
-    description:
-      "猛禽 + 德瑞均具备鸡尾酒服务技能，配合高售价饮品菜谱可大幅提升单晚营收。达比纳派遣持续补充调酒所需食材。",
   },
 ];
 

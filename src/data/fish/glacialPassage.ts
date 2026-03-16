@@ -45,7 +45,7 @@ export const glacialPassageFish: Fish[] = [
   }),
   fish({
     id: "pelican_eel",
-    name: "鹈鹕鳗",
+    name: "宽咽鳗",
     image: "images/fish/glacialPassage/鹈鹕鳗.png",
     zones: ["冰河通道"],
     note: "（即宽咽鳗/吞鳗）",

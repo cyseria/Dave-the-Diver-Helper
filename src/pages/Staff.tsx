@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EncyclopediaLayout } from "../components/EncyclopediaLayout";
 import { TabBar } from "../components/TabBar";
-import { restaurantTiers, staffCombos, staffData } from "../data/staff";
+import { restaurantTiers, staffData } from "../data/staff";
 import { usePlayerProgress } from "../store/usePlayerProgress";
 import { StaffTips } from "./StaffTips";
 import type { StaffRole } from "../types";
@@ -14,12 +14,20 @@ const ROLE_LABELS: Record<StaffRole, string> = {
   dispatch: "派遣",
 };
 
-const TIER_MARK: Record<string, { icon: string; label: string }> = {
-  S: { icon: "S", label: "S 强推" },
-  A: { icon: "A", label: "A 推荐" },
-};
-
 const STAT_MAX = 1100;
+
+const staffImages = import.meta.glob("../images/staff/*.{png,webp}", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+function getStaffImageUrl(staffName: string): string | null {
+  return (
+    staffImages[`../images/staff/${staffName}.png`] ??
+    staffImages[`../images/staff/${staffName}.webp`] ??
+    null
+  );
+}
 
 function StatBar({
   label,
@@ -56,14 +64,32 @@ export function Staff() {
 
   const selected = id ? staffData.find((s) => s.id === id) : null;
 
-  // Default select first staff when entering (or switching back) to staff tab
+  // 仅在 id 从无→有 的那次，自动切回员工图鉴页（用于从推荐页点击员工时展示详情）。
+  // 避免“id 存在时永远强制切回”，导致 tips/levels tab 无法切换。
+  const prevIdRef = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (tab !== "staff") return;
-    if (id) return;
-    const first = staffData[0];
-    if (!first) return;
-    navigate(`/staff/${first.id}`, { replace: true });
-  }, [tab, id, navigate]);
+    const prevId = prevIdRef.current;
+    prevIdRef.current = id;
+    if (!id) return;
+    if (tab === "staff") return;
+    if (prevId) return; // id 本来就存在：通常是用户在 staff 里选过人，不应强制切 tab
+    setTab("staff");
+  }, [id, tab]);
+
+  function handleTabChange(next: "staff" | "levels" | "tips") {
+    setTab(next);
+    // 进入员工图鉴且当前没有选中员工时，默认选中第一个员工
+    if (next === "staff" && !id) {
+      const first = staffData[0];
+      if (first) navigate(`/staff/${first.id}`, { replace: true });
+      return;
+    }
+    // 离开员工图鉴时，清理 URL 中的 /staff/:id
+    // 否则 id 存在会触发“自动切回员工图鉴”，导致其它 tab 看起来失效。
+    if (next !== "staff" && id) {
+      navigate("/staff", { replace: true });
+    }
+  }
 
   // ── Grid list panel ───────────────────────────────────────────────────────
   const listPanel = (
@@ -72,7 +98,6 @@ export function Staff() {
         {staffData.map((staff) => {
           const hired = hiredStaffIds.includes(staff.id);
           const isSelected = staff.id === id;
-          const tierMark = TIER_MARK[staff.tier];
           return (
             <div
               key={staff.id}
@@ -98,17 +123,17 @@ export function Staff() {
                   {hired ? "✓" : ""}
                 </button>
 
-                {/* Tier badge — top right */}
-                {tierMark && (
-                  <span
-                    className={`${styles.tierBadge} ${styles[`tierBadge_${staff.tier}`]}`}
-                    title={tierMark.label}
-                  >
-                    {tierMark.icon}
-                  </span>
-                )}
-
-                <span className={styles.cardEmoji}>{staff.emoji}</span>
+                {(() => {
+                  const url = getStaffImageUrl(staff.name);
+                  return url ? (
+                    <img
+                      className={styles.cardSprite}
+                      src={url}
+                      alt={staff.name}
+                      draggable={false}
+                    />
+                  ) : null;
+                })()}
               </div>
               <div className={styles.cardFooter}>
                 <span className={styles.cardName}>{staff.name}</span>
@@ -132,14 +157,17 @@ export function Staff() {
         className={`${styles.detailHeader} ${styles[`detailHeader_${selected.role}`]}`}
       >
         <div className={styles.detailAvatarBox}>
-          <span className={styles.detailEmoji}>{selected.emoji}</span>
-          {TIER_MARK[selected.tier] && (
-            <span
-              className={`${styles.detailTierBadge} ${styles[`tierBadge_${selected.tier}`]}`}
-            >
-              {TIER_MARK[selected.tier].icon} {TIER_MARK[selected.tier].label}
-            </span>
-          )}
+          {(() => {
+            const url = getStaffImageUrl(selected.name);
+            return url ? (
+              <img
+                className={styles.detailSprite}
+                src={url}
+                alt={selected.name}
+                draggable={false}
+              />
+            ) : null;
+          })()}
         </div>
         <div className={styles.detailMeta}>
           <div className={styles.detailNameRow}>
@@ -183,23 +211,46 @@ export function Staff() {
         </div>
       )}
 
-      {/* Skills */}
+      {/* 技能与菜系（每个一项一块） */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>⚡ 技能与解锁菜系</h3>
-        <div className={styles.skillList}>
-          {selected.skills.map((skill) => (
-            <div
-              key={`${skill.level}-${skill.name}`}
-              className={`${styles.skillItem} ${styles[`skillLv${skill.level}`]}`}
-            >
-              <span className={styles.skillLevel}>【{skill.level}级】</span>
-              <div className={styles.skillBody}>
-                <span className={styles.skillName}>{skill.name}</span>
-                <span className={styles.skillDesc}>{skill.description}</span>
-              </div>
-              {skill.isDish && <span className={styles.dishTag}>🍽️ 菜谱</span>}
+        <div className={styles.skillLines}>
+          <div className={styles.skillGroup}>
+            <span className={styles.skillGroupLabel}>技能</span>
+            <div className={styles.skillBlocks}>
+              {selected.skills
+                .filter((s) => !s.isDish)
+                .map((s) => (
+                  <span
+                    key={`${s.level}-${s.name}`}
+                    className={`${styles.skillBlock} ${styles.skillBlockAbility}`}
+                  >
+                    【{s.level}级】{s.name}
+                  </span>
+                ))}
+              {selected.skills.filter((s) => !s.isDish).length === 0 && (
+                <span className={styles.skillBlockEmpty}>—</span>
+              )}
             </div>
-          ))}
+          </div>
+          <div className={styles.skillGroup}>
+            <span className={styles.skillGroupLabel}>菜系</span>
+            <div className={styles.skillBlocks}>
+              {selected.skills
+                .filter((s) => s.isDish)
+                .map((s) => (
+                  <span
+                    key={`${s.level}-${s.name}`}
+                    className={`${styles.skillBlock} ${styles.skillBlockDish}`}
+                  >
+                    【{s.level}级】{s.name}
+                  </span>
+                ))}
+              {selected.skills.filter((s) => s.isDish).length === 0 && (
+                <span className={styles.skillBlockEmpty}>—</span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -222,39 +273,6 @@ export function Staff() {
           </strong>
         </div>
       </div>
-
-      {/* Combos this staff appears in */}
-      {(() => {
-        const relatedCombos = staffCombos.filter((c) =>
-          c.staffIds.includes(selected.id),
-        );
-        if (relatedCombos.length === 0) return null;
-        return (
-          <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>🤝 推荐搭配</h3>
-            <div className={styles.comboMiniList}>
-              {relatedCombos.map((combo) => (
-                <div key={combo.id} className={styles.comboMini}>
-                  <span className={styles.comboMiniEmoji}>{combo.emoji}</span>
-                  <div>
-                    <div className={styles.comboMiniName}>{combo.name}</div>
-                    <div className={styles.comboMiniMembers}>
-                      {combo.staffIds.map((sid) => {
-                        const s = staffData.find((x) => x.id === sid);
-                        return s ? (
-                          <span key={sid} className={styles.comboMiniMember}>
-                            {s.emoji} {s.name}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
     </div>
   ) : null;
 
@@ -274,7 +292,7 @@ export function Staff() {
       <TabBar
         tabs={staffTabs}
         value={tab}
-        onChange={(id) => setTab(id)}
+        onChange={(id) => handleTabChange(id)}
         aria-label="员工与餐厅"
       />
 

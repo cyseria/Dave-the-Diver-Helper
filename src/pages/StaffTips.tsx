@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { staffData, staffCombos } from "../data/staff";
+import { staffData } from "../data/staff";
 import styles from "./StaffTips.module.css";
 
 /* ─── Skill Priority data ────────────────────────────────── */
@@ -71,91 +71,17 @@ const DISPATCH_SKILLS: SkillTier[] = [
   },
 ];
 
-/* ─── Per-role recommendation data ──────────────────────── */
+/* ─── 阵容方案：三套各岗位推荐（统一数据 + 阵容卡片样式）──────── */
 
-interface RoleRec {
-  role: string;
-  emoji: string;
-  label: string;
-  color: string;
-  lightColor: string;
-  borderColor: string;
-  keyNote: string;
-  picks: {
-    staffId: string;
-    priority: number;
-    reason: string;
-  }[];
+interface PlanMember {
+  staffId: string;
+  skills: string[];
 }
 
-const ROLE_RECS: RoleRec[] = [
-  {
-    role: "manager",
-    emoji: "🏅",
-    label: "经理",
-    color: "#92400e",
-    lightColor: "#fef3c7",
-    borderColor: "#d97706",
-    keyNote: "料理 ≥ 500（解锁9级菜）、服务尽量高、少带技能（不抢跑堂做杂活）",
-    picks: [
-      { staffId: "drae",    priority: 1, reason: "唯一指定！料理 896 + 服务 855，自带清理+饮料，全场最优经理" },
-      { staffId: "itsuki",  priority: 2, reason: "服务 932 极高，备选方案：料理 438 仅支持 8 级菜，分店可用" },
-      { staffId: "billy",   priority: 3, reason: "清理达人经理可解放德瑞去主店，料理 408 仅支持 8 级菜" },
-    ],
-  },
-  {
-    role: "kitchen",
-    emoji: "🍳",
-    label: "后厨",
-    color: "#9a3412",
-    lightColor: "#fde8d8",
-    borderColor: "#e87040",
-    keyNote: "优先带特殊技能（食材处理达人/饮料制造达人），料理够用即可",
-    picks: [
-      { staffId: "raptor",   priority: 1, reason: "（实际后厨最优）饮料制造达人独一无二，全场所有饮料 +10 金" },
-      { staffId: "james",    priority: 2, reason: "食材处理达人 10% 额外出餐，料理 800 够用" },
-      { staffId: "maki",     priority: 3, reason: "免费获得 + 料理 1055，前期主力，后期可换下" },
-      { staffId: "yone",     priority: 4, reason: "料理++ 满级 901，食材处理高手，后期顶尖后厨" },
-      { staffId: "charlie",  priority: 5, reason: "料理 908，食材处理高手，性价比过渡选择" },
-    ],
-  },
-  {
-    role: "hall",
-    emoji: "🛎️",
-    label: "大堂",
-    color: "#1e3a8a",
-    lightColor: "#eff6ff",
-    borderColor: "#3b82f6",
-    keyNote: "必须凑齐清理 + 鸡尾酒/饮料 + 芥末，缺一不可",
-    picks: [
-      { staffId: "el-nino",  priority: 1, reason: "服务 986 全员最高，清理达人 + 饮料服务达人，大堂终极目标" },
-      { staffId: "raptor",   priority: 2, reason: "服务 910，鸡尾酒 + 芥末技能完美补位" },
-      { staffId: "itsuki",   priority: 3, reason: "服务 932，饮料技能，性价比极高，雇佣费仅 4 金" },
-      { staffId: "billy",    priority: 4, reason: "清理达人 + 小费达人，前中期大堂首选" },
-    ],
-  },
-  {
-    role: "dispatch",
-    emoji: "📦",
-    label: "派遣",
-    color: "#14532d",
-    lightColor: "#f0fdf4",
-    borderColor: "#22c55e",
-    keyNote: "筹备达人 > 一切，派遣员工不占餐厅编制、随时待命",
-    picks: [
-      { staffId: "davina",     priority: 1, reason: "唯一真神！筹备 859 + 魅力 915 + 筹备达人，一次带回10+ 食材" },
-      { staffId: "masayoshi",  priority: 2, reason: "筹备 814 + 筹备达人，双保险，与达比纳轮换" },
-      { staffId: "liu",        priority: 3, reason: "筹备 780，适合派遣薅材料" },
-    ],
-  },
-];
-
-/* ─── Lineup plans ───────────────────────────────────────── */
-
-interface LineupSlot {
-  role: string;
+interface PlanSlot {
   roleLabel: string;
-  members: { staffId: string; note: string }[];
+  roleKey: string;
+  members: PlanMember[];
 }
 
 interface LineupPlan {
@@ -165,68 +91,101 @@ interface LineupPlan {
   tag: string;
   tagColor: string;
   description: string;
-  mainStore: LineupSlot[];
-  branch: LineupSlot[];
+  mainStore: PlanSlot[];
+  branch: PlanSlot[];
 }
 
 const LINEUP_PLANS: LineupPlan[] = [
   {
-    id: "auto",
-    name: "全自动挂机阵容",
+    id: "plan1",
+    name: "方案1：全自动组合",
     emoji: "🤖",
-    tag: "戴夫全自动",
+    tag: "戴夫躺平流水线",
     tagColor: "#3b82f6",
-    description: "戴夫无需亲自磨芥末、倒饮料，全员覆盖所有跑堂杂活，适合想专心潜水的玩家。",
+    description: "旗舰店拉乌尔+詹姆斯后厨、埃尔尼诺+猛禽大堂；分店德瑞经理、真纪+米仓后厨、比利+杏子大堂。戴夫无需磨芥末倒饮料。",
     mainStore: [
-      { role: "hall", roleLabel: "🛎️ 大堂", members: [
-        { staffId: "el-nino", note: "清理达人 + 饮料" },
-        { staffId: "raptor",  note: "鸡尾酒 + 芥末" },
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "raoul", skills: ["饮料制造达人", "食材处理达人"] },
+        { staffId: "james", skills: ["食材处理达人", "料理+"] },
       ]},
-      { role: "kitchen", roleLabel: "🍳 后厨", members: [
-        { staffId: "raptor", note: "← 同一人兼顾两列" },
-        { staffId: "james",  note: "食材处理达人" },
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "el-nino", skills: ["清理达人", "饮料服务达人"] },
+        { staffId: "raptor", skills: ["鸡尾酒服务", "补充山葵"] },
       ]},
     ],
     branch: [
-      { role: "manager", roleLabel: "🏅 经理", members: [
-        { staffId: "drae", note: "清理 + 饮料全包" },
+      { roleKey: "manager", roleLabel: "🏅 分店经理", members: [
+        { staffId: "drae", skills: ["鸡尾酒服务", "清理"] },
       ]},
-      { role: "hall", roleLabel: "🛎️ 大堂", members: [
-        { staffId: "itsuki", note: "饮料服务" },
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "maki", skills: ["料理++", "料理+"] },
+        { staffId: "yone", skills: ["食材处理高手", "料理++"] },
       ]},
-      { role: "kitchen", roleLabel: "🍳 后厨", members: [
-        { staffId: "maki", note: "料理 1055" },
-        { staffId: "yone", note: "食材处理高手" },
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "billy", skills: ["清理达人", "小费达人"] },
+        { staffId: "kyoko", skills: ["小费达人", "饮料服务"] },
       ]},
     ],
   },
   {
-    id: "manual",
-    name: "戴夫磨芥末阵容",
-    emoji: "💪",
-    tag: "效率更高",
+    id: "plan2",
+    name: "方案2：小费天团组合",
+    emoji: "💵",
+    tag: "戴夫芥末机管理员",
     tagColor: "#22c55e",
-    description: "戴夫手动补芥末，解放猛禽空出主店，德瑞退守主店双清理，整体营收更高。",
+    description: "旗舰店拉乌尔+米仓后厨、埃尔尼诺+凯因大堂；分店德瑞经理、真纪+查理后厨、比利+杏子大堂。侧重小费与饮品。",
     mainStore: [
-      { role: "hall", roleLabel: "🛎️ 大堂", members: [
-        { staffId: "el-nino", note: "清理达人 + 饮料" },
-        { staffId: "drae",    note: "清理 + 饮料（双清理！）" },
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "raoul", skills: ["饮料制造达人", "食材处理达人"] },
+        { staffId: "yone", skills: ["食材处理高手", "料理++"] },
       ]},
-      { role: "kitchen", roleLabel: "🍳 后厨", members: [
-        { staffId: "raptor", note: "饮料制造达人" },
-        { staffId: "james",  note: "食材处理达人" },
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "el-nino", skills: ["清理达人", "饮料服务达人"] },
+        { staffId: "cain", skills: ["鸡尾酒服务", "小费达人"] },
       ]},
     ],
     branch: [
-      { role: "manager", roleLabel: "🏅 经理", members: [
-        { staffId: "itsuki", note: "服务 932，分店用" },
+      { roleKey: "manager", roleLabel: "🏅 分店经理", members: [
+        { staffId: "drae", skills: ["鸡尾酒服务", "清理"] },
       ]},
-      { role: "hall", roleLabel: "🛎️ 大堂", members: [
-        { staffId: "raptor", note: "鸡尾酒 + 芥末" },
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "maki", skills: ["料理++", "料理+"] },
+        { staffId: "charlie", skills: ["食材处理高手", "料理++"] },
       ]},
-      { role: "kitchen", roleLabel: "🍳 后厨", members: [
-        { staffId: "maki", note: "料理 1055" },
-        { staffId: "yone", note: "食材处理高手" },
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "billy", skills: ["清理达人", "小费达人"] },
+        { staffId: "kyoko", skills: ["小费达人", "饮料服务"] },
+      ]},
+    ],
+  },
+  {
+    id: "plan3",
+    name: "方案3：双清理组合",
+    emoji: "🧹",
+    tag: "戴夫芥末机管理员",
+    tagColor: "#8b5cf6",
+    description: "旗舰店拉乌尔+米仓后厨、埃尔尼诺+德瑞大堂（双清理）；分店杏子经理、真纪+查理后厨、比利+凯因大堂。",
+    mainStore: [
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "raoul", skills: ["饮料制造达人", "食材处理达人"] },
+        { staffId: "yone", skills: ["食材处理高手", "料理++"] },
+      ]},
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "el-nino", skills: ["清理达人", "饮料服务达人"] },
+        { staffId: "drae", skills: ["鸡尾酒服务", "清理"] },
+      ]},
+    ],
+    branch: [
+      { roleKey: "manager", roleLabel: "🏅 分店经理", members: [
+        { staffId: "kyoko", skills: ["小费达人", "饮料服务"] },
+      ]},
+      { roleKey: "kitchen", roleLabel: "🍳 厨房", members: [
+        { staffId: "maki", skills: ["料理++", "料理+"] },
+        { staffId: "charlie", skills: ["食材处理高手", "料理+"] },
+      ]},
+      { roleKey: "hall", roleLabel: "🛎️ 大堂", members: [
+        { staffId: "billy", skills: ["清理达人", "小费达人"] },
+        { staffId: "cain", skills: ["鸡尾酒服务", "小费达人"] },
       ]},
     ],
   },
@@ -316,74 +275,7 @@ export function StaffTips() {
           </div>
         </section>
 
-        {/* ── 技能优先级 ── */}
-        <section className={styles.section}>
-          <div className={`${styles.sectionHeader} ${styles.headerSkill}`}>
-            <span className={styles.sectionEmoji}>⚡</span>
-            <h2 className={styles.sectionTitle}>技能优先级</h2>
-          </div>
-          <div className={styles.skillPriorityGrid}>
-            <div className={styles.skillPriorityCard}>
-              <div className={styles.skillCardTitle}>🍳 后厨技能</div>
-              {KITCHEN_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
-            </div>
-            <div className={styles.skillPriorityCard}>
-              <div className={styles.skillCardTitle}>🛎️ 大堂技能</div>
-              {HALL_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
-            </div>
-            <div className={styles.skillPriorityCard}>
-              <div className={styles.skillCardTitle}>📦 派遣技能</div>
-              {DISPATCH_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
-              <div className={styles.tipCallout}>
-                💡 经理自带饮料+芥末+清理基础技能，优先选料理≥500且服务高的员工
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 各岗位推荐 ── */}
-        <section className={styles.section}>
-          <div className={`${styles.sectionHeader} ${styles.headerRole}`}>
-            <span className={styles.sectionEmoji}>🏆</span>
-            <h2 className={styles.sectionTitle}>各岗位推荐</h2>
-          </div>
-          <div className={styles.roleGrid}>
-            {ROLE_RECS.map((rec) => (
-              <div key={rec.role} className={styles.roleCard}
-                style={{ borderTopColor: rec.borderColor }}>
-                <div className={styles.roleCardHeader}
-                  style={{ background: rec.lightColor, borderBottomColor: `${rec.borderColor}60` }}>
-                  <span className={styles.roleEmoji}>{rec.emoji}</span>
-                  <span className={styles.roleLabel} style={{ color: rec.color }}>{rec.label}</span>
-                </div>
-                <div className={styles.roleKeyNote}>{rec.keyNote}</div>
-                <div className={styles.rolePickList}>
-                  {rec.picks.map((pick) => {
-                    const s = staffData.find((x) => x.id === pick.staffId);
-                    if (!s) return null;
-                    return (
-                      <div key={pick.staffId} className={styles.rolePickRow}>
-                        <span className={styles.rolePickRank}
-                          style={{ background: pick.priority === 1 ? rec.borderColor : "transparent",
-                                   color: pick.priority === 1 ? "#fff" : rec.color,
-                                   borderColor: rec.borderColor }}>
-                          {pick.priority}
-                        </span>
-                        <span className={styles.rolePickEmoji}>{s.emoji}</span>
-                        <div className={styles.rolePickBody}>
-                          <span className={styles.rolePickName}>{s.name}</span>
-                          <span className={styles.rolePickReason}>{pick.reason}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 阵容方案 ── */}
+        {/* ── 阵容方案（三套各岗位推荐，阵容卡片样式 + StaffChip 交互）── */}
         <section className={styles.section}>
           <div className={`${styles.sectionHeader} ${styles.headerLineup}`}>
             <span className={styles.sectionEmoji}>🤝</span>
@@ -407,11 +299,11 @@ export function StaffTips() {
                   <div className={styles.lineupStore}>
                     <div className={styles.lineupStoreTitle}>🏠 主店</div>
                     {plan.mainStore.map((slot) => (
-                      <div key={slot.role} className={styles.lineupSlot}>
+                      <div key={slot.roleKey} className={styles.lineupSlot}>
                         <span className={styles.lineupSlotRole}>{slot.roleLabel}</span>
                         <div className={styles.lineupSlotMembers}>
                           {slot.members.map((m) => (
-                            <StaffChip key={m.staffId} staffId={m.staffId} note={m.note} />
+                            <StaffChip key={m.staffId} staffId={m.staffId} note={m.skills.join(" · ")} />
                           ))}
                         </div>
                       </div>
@@ -420,11 +312,11 @@ export function StaffTips() {
                   <div className={styles.lineupStore}>
                     <div className={styles.lineupStoreTitle}>🏪 分店</div>
                     {plan.branch.map((slot) => (
-                      <div key={slot.role} className={styles.lineupSlot}>
+                      <div key={slot.roleKey} className={styles.lineupSlot}>
                         <span className={styles.lineupSlotRole}>{slot.roleLabel}</span>
                         <div className={styles.lineupSlotMembers}>
                           {slot.members.map((m) => (
-                            <StaffChip key={m.staffId} staffId={m.staffId} note={m.note} />
+                            <StaffChip key={m.staffId} staffId={m.staffId} note={m.skills.join(" · ")} />
                           ))}
                         </div>
                       </div>
@@ -436,30 +328,28 @@ export function StaffTips() {
           </div>
         </section>
 
-        {/* ── 快捷搭配 (来自餐厅) ── */}
+        {/* ── 技能优先级 ── */}
         <section className={styles.section}>
-          <div className={`${styles.sectionHeader} ${styles.headerCombo}`}>
-            <span className={styles.sectionEmoji}>✨</span>
-            <h2 className={styles.sectionTitle}>快捷搭配</h2>
+          <div className={`${styles.sectionHeader} ${styles.headerSkill}`}>
+            <span className={styles.sectionEmoji}>⚡</span>
+            <h2 className={styles.sectionTitle}>技能优先级</h2>
           </div>
-          <div className={styles.comboGrid}>
-            {staffCombos.map((combo) => (
-              <div key={combo.id} className={styles.comboCard}>
-                <div className={styles.comboCardHeader}>
-                  <span className={styles.comboEmoji}>{combo.emoji}</span>
-                  <div>
-                    <div className={styles.comboName}>{combo.name}</div>
-                    <span className={styles.comboTag}>{combo.tag}</span>
-                  </div>
-                </div>
-                <div className={styles.comboMembers}>
-                  {combo.staffIds.map((sid) => (
-                    <StaffChip key={sid} staffId={sid} />
-                  ))}
-                </div>
-                <p className={styles.comboDesc}>{combo.description}</p>
+          <div className={styles.skillPriorityGrid}>
+            <div className={styles.skillPriorityCard}>
+              <div className={styles.skillCardTitle}>🍳 后厨技能</div>
+              {KITCHEN_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
+            </div>
+            <div className={styles.skillPriorityCard}>
+              <div className={styles.skillCardTitle}>🛎️ 大堂技能</div>
+              {HALL_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
+            </div>
+            <div className={styles.skillPriorityCard}>
+              <div className={styles.skillCardTitle}>📦 派遣技能</div>
+              {DISPATCH_SKILLS.map((t) => <SkillTierRow key={t.tier} tier={t} />)}
+              <div className={styles.tipCallout}>
+                💡 经理自带饮料+芥末+清理基础技能，优先选料理≥500且服务高的员工
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
